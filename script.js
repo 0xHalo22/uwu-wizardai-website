@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const emojiContainer = document.getElementById('emoji-container');
     const emojis = ['🧙‍♂️', '🔮', '🌙', '✨']; // Wizard, crystal ball, crescent moon, sparkles
     const emojiElements = [];
-    const numberOfEmojis = 50;
+    const numberOfEmojis = 150; // Increased number of emojis for more coverage
 
     // Create and add emoji elements to the container
     for (let i = 0; i < numberOfEmojis; i++) {
@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         emojiElement.style.top = `${Math.random() * 100}vh`;
         emojiElement.style.left = `${Math.random() * 100}vw`;
         emojiElement.style.animation = `float ${4 + Math.random() * 4}s ease-in-out infinite`;
+        emojiElement.style.fontSize = `${1 + Math.random() * 2}em`; // Vary emoji sizes between 1em to 3em
         emojiContainer.appendChild(emojiElement);
         emojiElements.push(emojiElement);
     }
@@ -30,10 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const deltaY = emojiY - mouseY;
             const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-            if (distance < 150) {
+            if (distance < 200) { // Increased distance for more noticeable interaction
                 const angle = Math.atan2(deltaY, deltaX);
-                const moveX = Math.cos(angle) * 100;
-                const moveY = Math.sin(angle) * 100;
+                const moveX = Math.cos(angle) * 150;
+                const moveY = Math.sin(angle) * 150;
                 emoji.style.transform = `translate(${moveX}px, ${moveY}px)`;
             } else {
                 emoji.style.transform = 'translate(0, 0)';
