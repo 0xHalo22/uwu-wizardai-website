@@ -1,163 +1,242 @@
-// Debug flag
-const DEBUG = true;
-
-// Global variables
 let scene, camera, renderer, clock;
 let loadingScreen, controlsHint;
-let islands = [];
+let moveForward = false;
+let moveBackward = false;
+let moveLeft = false;
+let moveRight = false;
+let moveUp = false;
+let moveDown = false;
+let velocity = new THREE.Vector3();
+let direction = new THREE.Vector3();
 let particles = [];
+let islands = [];
 
-// Initialize Three.js scene
 function init() {
-    try {
-        console.log('Initializing portal...');
-        
-        // Create scene
-        scene = new THREE.Scene();
-        if (DEBUG) console.log('Scene created');
+    console.log('Initializing enhanced portal...');
+    
+    // Scene setup
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000000, 0.001);
+    
+    // Camera setup
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 30);
+    
+    clock = new THREE.Clock();
 
-        // Set up camera
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 30;
-        if (DEBUG) console.log('Camera set up');
+    // Renderer setup
+    setupRenderer();
+    setupStarfield();
+    setupFloatingIslands();
+    setupParticles();
+    setupLighting();
+    setupControls();
 
-        // Initialize clock
-        clock = new THREE.Clock();
-
-        // Set up renderer
-        setupRenderer();
-        if (DEBUG) console.log('Renderer initialized');
-
-        // Set up initial scene
-        setupScene();
-        if (DEBUG) console.log('Scene setup complete');
-
-        // Start animation
-        animate();
-        if (DEBUG) console.log('Animation started');
-
-    } catch (error) {
-        console.error('Error during initialization:', error);
-    }
+    // Start animation
+    animate();
 }
 
 function setupRenderer() {
-    try {
-        renderer = new THREE.WebGLRenderer({
-            canvas: document.querySelector('#portal-canvas'),
-            antialias: true
-        });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer = new THREE.WebGLRenderer({
+        canvas: document.querySelector('#portal-canvas'),
+        antialias: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000);
+}
+
+function setupStarfield() {
+    const starGeometry = new THREE.BufferGeometry();
+    const starVertices = [];
+    
+    for(let i = 0; i < 10000; i++) {
+        const x = (Math.random() - 0.5) * 2000;
+        const y = (Math.random() - 0.5) * 2000;
+        const z = (Math.random() - 0.5) * 2000;
+        starVertices.push(x, y, z);
+    }
+    
+    starGeometry.setAttribute('position', 
+        new THREE.Float32BufferAttribute(starVertices, 3));
+    
+    const starMaterial = new THREE.PointsMaterial({
+        color: 0xFFFFFF,
+        size: 0.5,
+        transparent: true
+    });
+    
+    const starField = new THREE.Points(starGeometry, starMaterial);
+    scene.add(starField);
+}
+
+function setupFloatingIslands() {
+    const islandGeometries = [
+        new THREE.IcosahedronGeometry(5, 1),
+        new THREE.OctahedronGeometry(4, 2),
+        new THREE.TetrahedronGeometry(6, 1)
+    ];
+
+    const crystalMaterial = new THREE.MeshPhongMaterial({
+        color: 0x3366ff,
+        shininess: 100,
+        transparent: true,
+        opacity: 0.8,
+        emissive: 0x112244
+    });
+
+    for(let i = 0; i < 7; i++) {
+        const geometry = islandGeometries[Math.floor(Math.random() * islandGeometries.length)];
+        const island = new THREE.Mesh(geometry, crystalMaterial);
         
-        // Check if renderer was created successfully
-        if (!renderer) throw new Error('Failed to create renderer');
+        island.position.set(
+            (Math.random() - 0.5) * 100,
+            (Math.random() - 0.5) * 100,
+            (Math.random() - 0.5) * 100
+        );
         
-    } catch (error) {
-        console.error('Error setting up renderer:', error);
-        throw error;
+        island.rotation.set(
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            Math.random() * Math.PI
+        );
+        
+        island.scale.setScalar(Math.random() * 1.5 + 0.5);
+        islands.push(island);
+        scene.add(island);
     }
 }
 
-function setupScene() {
-    // Add basic lighting
-    const ambientLight = new THREE.AmbientLight(0x404040);
+function setupParticles() {
+    const particleCount = 1000;
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    
+    const geometry = new THREE.BufferGeometry();
+    
+    for(let i = 0; i < particleCount * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 100;
+        positions[i + 1] = (Math.random() - 0.5) * 100;
+        positions[i + 2] = (Math.random() - 0.5) * 100;
+        
+        // Blue-ish colors
+        colors[i] = Math.random() * 0.5;
+        colors[i + 1] = Math.random() * 0.5 + 0.5;
+        colors[i + 2] = 1;
+    }
+    
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    
+    const material = new THREE.PointsMaterial({
+        size: 0.5,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+    });
+    
+    const particleSystem = new THREE.Points(geometry, material);
+    particles.push(particleSystem);
+    scene.add(particleSystem);
+}
+
+function setupLighting() {
+    const ambientLight = new THREE.AmbientLight(0x222244);
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
+    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1);
+    mainLight.position.set(10, 10, 10);
+    scene.add(mainLight);
 
-    // Add a simple test cube to verify scene is working
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    // Add some colored point lights
+    const colors = [0x3366ff, 0xff6633, 0x33ff66];
+    colors.forEach((color, index) => {
+        const light = new THREE.PointLight(color, 1, 50);
+        light.position.set(
+            Math.cos(index * Math.PI * 2 / 3) * 30,
+            Math.sin(index * Math.PI * 2 / 3) * 30,
+            0
+        );
+        scene.add(light);
+    });
+}
 
-    // Add some basic particles
-    createParticles();
+function setupControls() {
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+    document.addEventListener('mousemove', onMouseMove);
+    
+    // Lock pointer on click
+    document.addEventListener('click', () => {
+        document.body.requestPointerLock();
+    });
+}
 
-    // Handle loading screen
-    loadingScreen = document.getElementById('loading-screen');
-    controlsHint = document.getElementById('controls-hint');
-
-    if (loadingScreen && controlsHint) {
-        setTimeout(() => {
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                controlsHint.classList.remove('hidden');
-                setTimeout(() => {
-                    controlsHint.classList.add('hidden');
-                }, 5000);
-            }, 1000);
-        }, 2000);
+function onKeyDown(event) {
+    switch(event.code) {
+        case 'KeyW': moveForward = true; break;
+        case 'KeyS': moveBackward = true; break;
+        case 'KeyA': moveLeft = true; break;
+        case 'KeyD': moveRight = true; break;
+        case 'Space': moveUp = true; break;
+        case 'ShiftLeft': moveDown = true; break;
     }
 }
 
-function createParticles() {
-    try {
-        const particleGeometry = new THREE.BufferGeometry();
-        const particleCount = 1000;
+function onKeyUp(event) {
+    switch(event.code) {
+        case 'KeyW': moveForward = false; break;
+        case 'KeyS': moveBackward = false; break;
+        case 'KeyA': moveLeft = false; break;
+        case 'KeyD': moveRight = false; break;
+        case 'Space': moveUp = false; break;
+        case 'ShiftLeft': moveDown = false; break;
+    }
+}
 
-        const positions = new Float32Array(particleCount * 3);
-        
-        for (let i = 0; i < particleCount * 3; i += 3) {
-            positions[i] = (Math.random() - 0.5) * 100;
-            positions[i + 1] = (Math.random() - 0.5) * 100;
-            positions[i + 2] = (Math.random() - 0.5) * 100;
-        }
-
-        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-        const particleMaterial = new THREE.PointsMaterial({
-            size: 0.1,
-            color: 0x89CFF0,
-            transparent: true,
-            opacity: 0.8
-        });
-
-        const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
-        scene.add(particleSystem);
-        particles.push(particleSystem);
-
-    } catch (error) {
-        console.error('Error creating particles:', error);
+function onMouseMove(event) {
+    if (document.pointerLockElement === document.body) {
+        camera.rotation.y -= event.movementX * 0.002;
+        camera.rotation.x -= event.movementY * 0.002;
+        camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
     }
 }
 
 function animate() {
-    try {
-        requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
+    const delta = clock.getDelta();
 
-        // Rotate particles
-        particles.forEach(particle => {
-            particle.rotation.y += 0.001;
-        });
+    // Update movement
+    direction.z = Number(moveForward) - Number(moveBackward);
+    direction.x = Number(moveRight) - Number(moveLeft);
+    direction.y = Number(moveUp) - Number(moveDown);
+    direction.normalize();
 
-        renderer.render(scene, camera);
+    // Move camera
+    if (moveForward || moveBackward) camera.translateZ(-direction.z * 30 * delta);
+    if (moveLeft || moveRight) camera.translateX(-direction.x * 30 * delta);
+    if (moveUp || moveDown) camera.translateY(direction.y * 30 * delta);
 
-    } catch (error) {
-        console.error('Error in animation loop:', error);
-    }
+    // Animate islands
+    islands.forEach((island, i) => {
+        island.rotation.x += 0.001;
+        island.rotation.y += 0.002;
+        island.position.y += Math.sin(Date.now() * 0.001 + i) * 0.02;
+    });
+
+    // Animate particles
+    particles.forEach(particle => {
+        particle.rotation.y += 0.0005;
+    });
+
+    renderer.render(scene, camera);
 }
 
-// Handle window resize
 window.addEventListener('resize', () => {
-    try {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    } catch (error) {
-        console.error('Error handling resize:', error);
-    }
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Initialize everything when the window loads
-window.addEventListener('load', () => {
-    try {
-        init();
-    } catch (error) {
-        console.error('Error during load:', error);
-    }
-});
+window.addEventListener('load', init);
