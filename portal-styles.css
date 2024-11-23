@@ -89,7 +89,7 @@
   #controls-hint {
     position: fixed;
     bottom: 80px;
-    left: 50%;
+    left: 50%; 
     transform: translateX(-50%);
     color: rgba(137, 207, 240, 0.8);
     font-family: 'VT323', monospace;
