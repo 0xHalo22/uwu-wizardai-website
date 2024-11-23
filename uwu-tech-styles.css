@@ -3,13 +3,29 @@ body {
     min-height: 100vh;
 }
 
+.main-wizard {
+    position: relative;
+    text-align: center;
+    padding-top: 80px;  /* Space for nav bar */
+    margin-bottom: 1rem;
+    z-index: 2;
+}
+
+.main-wizard-emoji {
+    font-size: 20em;  /* Much bigger! */
+    display: inline-block;
+    animation: wizard-breathe 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.2));
+}
+
 .hero-section {
-    height: 70vh;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 1rem;
     position: relative;
+    margin-bottom: 2rem;
 }
 
 .hero-content {
@@ -19,7 +35,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     background: rgba(255, 255, 255, 0.03);
-    padding: 3rem;
+    padding: 2rem 3rem;
     border-radius: 20px;
     backdrop-filter: blur(10px);
     transform: translateY(0);
@@ -30,14 +46,9 @@ body {
     transform: translateY(-5px);
 }
 
-.wizard-icon {
-    font-size: 8em;
-    animation: float-wizard 6s ease-in-out infinite;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
-}
-
 .hero-text {
     flex: 1;
+    text-align: center;
 }
 
 .hero-text h1 {
@@ -56,27 +67,13 @@ body {
 }
 
 .bots-section {
-    padding: 2rem;
+    padding: 0 2rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
     align-items: center;
     position: relative;
     z-index: 2;
-}
-
-.main-wizard {
-    position: relative;
-    text-align: center;
-    margin-bottom: 2rem;
-    z-index: 2;
-}
-
-.main-wizard-emoji {
-    font-size: 12em;
-    display: inline-block;
-    animation: wizard-breathe 4s ease-in-out infinite;
-    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.2));
 }
 
 .bot-card {
@@ -146,15 +143,6 @@ body {
 .bot-link:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.4);
-}
-
-@keyframes float-wizard {
-    0%, 100% {
-        transform: translateY(-20px) rotate(-5deg);
-    }
-    50% {
-        transform: translateY(20px) rotate(5deg);
-    }
 }
 
 @keyframes wizard-breathe {
