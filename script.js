@@ -1,44 +1,132 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const emojiContainer = document.getElementById('emoji-container');
-    const emojis = ['🧙‍♂️', '🔮', '🌙', '✨']; // Wizard, crystal ball, crescent moon, sparkles
-    const emojiElements = [];
-    const numberOfEmojis = 150; // Increased number of emojis for more coverage
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    color: #fff;
+    overflow: hidden;
+    min-height: 100vh;
+}
 
-    // Create and add emoji elements to the container
-    for (let i = 0; i < numberOfEmojis; i++) {
-        const emojiElement = document.createElement('div');
-        emojiElement.className = 'emoji';
-        emojiElement.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        emojiElement.style.top = `${Math.random() * 100}vh`;
-        emojiElement.style.left = `${Math.random() * 100}vw`;
-        emojiElement.style.animation = `float ${4 + Math.random() * 4}s ease-in-out infinite`;
-        emojiElement.style.fontSize = `${1 + Math.random() * 2}em`; // Vary emoji sizes between 1em to 3em
-        emojiContainer.appendChild(emojiElement);
-        emojiElements.push(emojiElement);
+nav#menu {
+    position: fixed;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    padding: 10px 0;
+}
+
+nav#menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav#menu ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav#menu ul li a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.2em;
+    transition: all 0.3s;
+    padding: 5px 10px;
+    border-radius: 15px;
+}
+
+nav#menu ul li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+main#content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 5;
+}
+
+.description h1 {
+    font-size: 3.5em;
+    font-weight: 300;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    animation: glow 2s ease-in-out infinite;
+}
+
+.description p {
+    font-size: 1.5em;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#emoji-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.emoji {
+    position: absolute;
+    user-select: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.sparkle {
+    position: absolute;
+    pointer-events: none;
+    animation: sparkle-fade 1s ease-in-out forwards;
+    z-index: 2;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, -10px) rotate(0deg);
     }
+    25% {
+        transform: translate(5px, 0) rotate(3deg);
+    }
+    50% {
+        transform: translate(0, 10px) rotate(0deg);
+    }
+    75% {
+        transform: translate(-5px, 0) rotate(-3deg);
+    }
+}
 
-    // Add mousemove event listener to make emojis move away from the cursor
-    document.addEventListener('mousemove', (e) => {
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
+@keyframes glow {
+    0%, 100% {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8),
+                     0 0 30px rgba(255, 255, 255, 0.6);
+    }
+}
 
-        emojiElements.forEach((emoji) => {
-            const emojiRect = emoji.getBoundingClientRect();
-            const emojiX = emojiRect.left + emojiRect.width / 2;
-            const emojiY = emojiRect.top + emojiRect.height / 2;
-
-            const deltaX = emojiX - mouseX;
-            const deltaY = emojiY - mouseY;
-            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-            if (distance < 200) { // Increased distance for more noticeable interaction
-                const angle = Math.atan2(deltaY, deltaX);
-                const moveX = Math.cos(angle) * 150;
-                const moveY = Math.sin(angle) * 150;
-                emoji.style.transform = `translate(${moveX}px, ${moveY}px)`;
-            } else {
-                emoji.style.transform = 'translate(0, 0)';
-            }
-        });
-    });
-});
+@keyframes sparkle-fade {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(180deg);
+        opacity: 0;
+    }
+}
