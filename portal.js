@@ -1,30 +1,27 @@
-const { Scene, PerspectiveCamera, WebGLRenderer, BufferGeometry, Float32BufferAttribute, PointsMaterial, Points, 
-    IcosahedronGeometry, OctahedronGeometry, TetrahedronGeometry, MeshPhongMaterial, Mesh, 
-    AmbientLight, DirectionalLight, PointLight, Vector3, FogExp2 } = window.THREE;
+import * as THREE from 'three';
 
 let scene, camera, renderer, clock;
-let loadingScreen, controlsHint;
 let moveForward = false;
 let moveBackward = false;
 let moveLeft = false;
 let moveRight = false;
 let moveUp = false;
 let moveDown = false;
-let velocity = new Vector3();
-let direction = new Vector3();
+let velocity = new THREE.Vector3();
+let direction = new THREE.Vector3();
 let particles = [];
 let islands = [];
 
 function init() {
     console.log('Initializing enhanced portal...');
     
-    scene = new Scene();
-    scene.fog = new FogExp2(0x000000, 0.001);
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000000, 0.001);
     
-    camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 30);
     
-    clock = new window.THREE.Clock();
+    clock = new THREE.Clock();
 
     setupRenderer();
     setupStarfield();
@@ -37,7 +34,7 @@ function init() {
 }
 
 function setupRenderer() {
-    renderer = new WebGLRenderer({
+    renderer = new THREE.WebGLRenderer({
         canvas: document.querySelector('#portal-canvas'),
         antialias: true
     });
@@ -47,7 +44,7 @@ function setupRenderer() {
 }
 
 function setupStarfield() {
-    const starGeometry = new BufferGeometry();
+    const starGeometry = new THREE.BufferGeometry();
     const starVertices = [];
     
     for(let i = 0; i < 10000; i++) {
@@ -58,26 +55,26 @@ function setupStarfield() {
     }
     
     starGeometry.setAttribute('position', 
-        new Float32BufferAttribute(starVertices, 3));
+        new THREE.Float32BufferAttribute(starVertices, 3));
     
-    const starMaterial = new PointsMaterial({
+    const starMaterial = new THREE.PointsMaterial({
         color: 0xFFFFFF,
         size: 0.5,
         transparent: true
     });
     
-    const starField = new Points(starGeometry, starMaterial);
+    const starField = new THREE.Points(starGeometry, starMaterial);
     scene.add(starField);
 }
 
 function setupFloatingIslands() {
     const islandGeometries = [
-        new IcosahedronGeometry(5, 1),
-        new OctahedronGeometry(4, 2),
-        new TetrahedronGeometry(6, 1)
+        new THREE.IcosahedronGeometry(5, 1),
+        new THREE.OctahedronGeometry(4, 2),
+        new THREE.TetrahedronGeometry(6, 1)
     ];
 
-    const crystalMaterial = new MeshPhongMaterial({
+    const crystalMaterial = new THREE.MeshPhongMaterial({
         color: 0x3366ff,
         shininess: 100,
         transparent: true,
@@ -87,7 +84,7 @@ function setupFloatingIslands() {
 
     for(let i = 0; i < 7; i++) {
         const geometry = islandGeometries[Math.floor(Math.random() * islandGeometries.length)];
-        const island = new Mesh(geometry, crystalMaterial);
+        const island = new THREE.Mesh(geometry, crystalMaterial);
         
         island.position.set(
             (Math.random() - 0.5) * 100,
@@ -112,47 +109,45 @@ function setupParticles() {
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
     
-    const geometry = new BufferGeometry();
+    const geometry = new THREE.BufferGeometry();
     
     for(let i = 0; i < particleCount * 3; i += 3) {
         positions[i] = (Math.random() - 0.5) * 100;
         positions[i + 1] = (Math.random() - 0.5) * 100;
         positions[i + 2] = (Math.random() - 0.5) * 100;
         
-        // Blue-ish colors
         colors[i] = Math.random() * 0.5;
         colors[i + 1] = Math.random() * 0.5 + 0.5;
         colors[i + 2] = 1;
     }
     
-    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
     
-    const material = new PointsMaterial({
+    const material = new THREE.PointsMaterial({
         size: 0.5,
         vertexColors: true,
         transparent: true,
         opacity: 0.8,
-        blending: window.THREE.AdditiveBlending
+        blending: THREE.AdditiveBlending
     });
     
-    const particleSystem = new Points(geometry, material);
+    const particleSystem = new THREE.Points(geometry, material);
     particles.push(particleSystem);
     scene.add(particleSystem);
 }
 
 function setupLighting() {
-    const ambientLight = new AmbientLight(0x222244);
+    const ambientLight = new THREE.AmbientLight(0x222244);
     scene.add(ambientLight);
 
-    const mainLight = new DirectionalLight(0xCCDDFF, 1);
+    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1);
     mainLight.position.set(10, 10, 10);
     scene.add(mainLight);
 
-    // Add some colored point lights
     const colors = [0x3366ff, 0xff6633, 0x33ff66];
     colors.forEach((color, index) => {
-        const light = new PointLight(color, 1, 50);
+        const light = new THREE.PointLight(color, 1, 50);
         light.position.set(
             Math.cos(index * Math.PI * 2 / 3) * 30,
             Math.sin(index * Math.PI * 2 / 3) * 30,
@@ -163,14 +158,59 @@ function setupLighting() {
 }
 
 function setupControls() {
+    // Add click-to-start overlay
+    const startOverlay = document.createElement('div');
+    startOverlay.className = 'start-overlay';
+    startOverlay.innerHTML = `
+        <div class="start-content">
+            <h2>Click to Enter the Magical Realm</h2>
+            <p>ESC to exit | WASD to move | Trackpad to look around</p>
+        </div>
+    `;
+    document.body.appendChild(startOverlay);
+
+    // Handle start interaction
+    startOverlay.addEventListener('click', initializeControls);
+    
+    // Add escape handler
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Escape') {
+            document.exitPointerLock();
+        }
+    });
+}
+
+function initializeControls() {
+    const canvas = document.querySelector('#portal-canvas');
+    canvas.requestPointerLock = canvas.requestPointerLock ||
+                               canvas.mozRequestPointerLock ||
+                               canvas.webkitRequestPointerLock;
+
+    // Try to lock the pointer
+    canvas.requestPointerLock();
+
+    // Setup all control listeners
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('keyup', onKeyUp);
     document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('pointerlockchange', onPointerLockChange);
+    document.addEventListener('mozpointerlockchange', onPointerLockChange);
+    document.addEventListener('webkitpointerlockchange', onPointerLockChange);
     
-    // Lock pointer on click
-    document.addEventListener('click', () => {
-        document.body.requestPointerLock();
-    });
+    // Hide the overlay
+    document.querySelector('.start-overlay').style.display = 'none';
+}
+
+function onPointerLockChange() {
+    if (document.pointerLockElement === null) {
+        // Re-show the overlay when exiting pointer lock
+        document.querySelector('.start-overlay').style.display = 'flex';
+        
+        // Remove control listeners when not in control mode
+        document.removeEventListener('keydown', onKeyDown);
+        document.removeEventListener('keyup', onKeyUp);
+        document.removeEventListener('mousemove', onMouseMove);
+    }
 }
 
 function onKeyDown(event) {
@@ -196,10 +236,15 @@ function onKeyUp(event) {
 }
 
 function onMouseMove(event) {
-    if (document.pointerLockElement === document.body) {
-        camera.rotation.y -= event.movementX * 0.002;
-        camera.rotation.x -= event.movementY * 0.002;
-        camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
+    if (document.pointerLockElement === document.querySelector('#portal-canvas')) {
+        const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+        const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+        
+        camera.rotation.y -= movementX * 0.002;
+        camera.rotation.x -= movementY * 0.002;
+        
+        // Clamp the vertical rotation
+        camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
     }
 }
 
@@ -207,16 +252,18 @@ function animate() {
     requestAnimationFrame(animate);
     const delta = clock.getDelta();
 
-    // Update movement
-    direction.z = Number(moveForward) - Number(moveBackward);
-    direction.x = Number(moveRight) - Number(moveLeft);
-    direction.y = Number(moveUp) - Number(moveDown);
-    direction.normalize();
+    if (document.pointerLockElement === document.querySelector('#portal-canvas')) {
+        // Update movement
+        direction.z = Number(moveForward) - Number(moveBackward);
+        direction.x = Number(moveRight) - Number(moveLeft);
+        direction.y = Number(moveUp) - Number(moveDown);
+        direction.normalize();
 
-    // Move camera
-    if (moveForward || moveBackward) camera.translateZ(-direction.z * 30 * delta);
-    if (moveLeft || moveRight) camera.translateX(-direction.x * 30 * delta);
-    if (moveUp || moveDown) camera.translateY(direction.y * 30 * delta);
+        // Move camera
+        if (moveForward || moveBackward) camera.translateZ(-direction.z * 30 * delta);
+        if (moveLeft || moveRight) camera.translateX(-direction.x * 30 * delta);
+        if (moveUp || moveDown) camera.translateY(direction.y * 30 * delta);
+    }
 
     // Animate islands
     islands.forEach((island, i) => {
