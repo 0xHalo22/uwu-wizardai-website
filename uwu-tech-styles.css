@@ -1,0 +1,148 @@
+.hero-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 3rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.hero-content:hover {
+    transform: translateY(-5px);
+}
+
+.wizard-icon {
+    font-size: 8em;
+    animation: float-wizard 6s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+}
+
+.hero-text {
+    flex: 1;
+}
+
+.hero-text h1 {
+    font-size: 3.5em;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #fff, #e0e0ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-text p {
+    font-size: 1.2em;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.bots-section {
+    min-height: 100vh;
+    padding: 4rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    align-items: center;
+}
+
+.bot-card {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1000px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    transform: translateX(0);
+    transition: all 0.3s ease;
+}
+
+.bot-card:hover {
+    transform: translateX(10px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.bot-icon {
+    font-size: 4em;
+    animation: float 4s ease-in-out infinite;
+}
+
+.bot-content {
+    flex: 1;
+}
+
+.bot-content h2 {
+    font-size: 2em;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.bot-content p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
+}
+
+.bot-details {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.bot-details span {
+    font-family: monospace;
+    color: #a0a0ff;
+    font-size: 1.1em;
+}
+
+.bot-link {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.bot-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+@keyframes float-wizard {
+    0%, 100% {
+        transform: translateY(-20px) rotate(-5deg);
+    }
+    50% {
+        transform: translateY(20px) rotate(5deg);
+    }
+}
+
+/* Parallax effect for bot cards */
+@media (min-height: 800px) {
+    .bot-card {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s ease;
+    }
+
+    .bot-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

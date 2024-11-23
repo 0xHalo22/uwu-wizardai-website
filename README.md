@@ -1,2 +1,2 @@
 # uwu-wizardai-website
-UwU
+UwU, nigga
