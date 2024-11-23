@@ -1,5 +1,4 @@
-import * as THREE from 'three';
-
+// Initialize global variables
 let scene, camera, renderer, clock;
 let moveForward = false;
 let moveBackward = false;
@@ -243,7 +242,6 @@ function onMouseMove(event) {
         camera.rotation.y -= movementX * 0.002;
         camera.rotation.x -= movementY * 0.002;
         
-        // Clamp the vertical rotation
         camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
     }
 }
@@ -253,13 +251,11 @@ function animate() {
     const delta = clock.getDelta();
 
     if (document.pointerLockElement === document.querySelector('#portal-canvas')) {
-        // Update movement
         direction.z = Number(moveForward) - Number(moveBackward);
         direction.x = Number(moveRight) - Number(moveLeft);
         direction.y = Number(moveUp) - Number(moveDown);
         direction.normalize();
 
-        // Move camera
         if (moveForward || moveBackward) camera.translateZ(-direction.z * 30 * delta);
         if (moveLeft || moveRight) camera.translateX(-direction.x * 30 * delta);
         if (moveUp || moveDown) camera.translateY(direction.y * 30 * delta);
