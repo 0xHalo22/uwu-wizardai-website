@@ -1,132 +1,94 @@
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(to bottom, #1a1a2e, #16213e);
-    color: #fff;
-    overflow: hidden;
-    min-height: 100vh;
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const emojiContainer = document.getElementById('emoji-container');
+    const emojis = ['🧙‍♂️', '🔮', '🌙', '✨', '⭐', '🌟', '💫'];
+    const emojiElements = [];
+    const numberOfEmojis = 200;
+    let mouseX = 0;
+    let mouseY = 0;
+    let frame;
 
-nav#menu {
-    position: fixed;
-    top: 20px;
-    width: 100%;
-    text-align: center;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
-    padding: 10px 0;
-}
-
-nav#menu ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-nav#menu ul li {
-    display: inline;
-    margin: 0 15px;
-}
-
-nav#menu ul li a {
-    text-decoration: none;
-    font-weight: bold;
-    color: #fff;
-    font-size: 1.2em;
-    transition: all 0.3s;
-    padding: 5px 10px;
-    border-radius: 15px;
-}
-
-nav#menu ul li a:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-}
-
-main#content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 5;
-}
-
-.description h1 {
-    font-size: 3.5em;
-    font-weight: 300;
-    margin-bottom: 20px;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    animation: glow 2s ease-in-out infinite;
-}
-
-.description p {
-    font-size: 1.5em;
-    line-height: 1.6;
-    max-width: 600px;
-    margin: 0 auto;
-    color: rgba(255, 255, 255, 0.9);
-}
-
-#emoji-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.emoji {
-    position: absolute;
-    user-select: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
-}
-
-.sparkle {
-    position: absolute;
-    pointer-events: none;
-    animation: sparkle-fade 1s ease-in-out forwards;
-    z-index: 2;
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translate(0, -10px) rotate(0deg);
+    // Create and add emoji elements
+    for (let i = 0; i < numberOfEmojis; i++) {
+        const emojiElement = document.createElement('div');
+        emojiElement.className = 'emoji';
+        emojiElement.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        
+        // Random initial positions and properties
+        const initialX = Math.random() * window.innerWidth;
+        const initialY = Math.random() * window.innerHeight;
+        const scale = 0.5 + Math.random() * 1.5;
+        const duration = 4 + Math.random() * 4;
+        const delay = Math.random() * -duration;
+        
+        Object.assign(emojiElement.style, {
+            left: `${initialX}px`,
+            top: `${initialY}px`,
+            fontSize: `${scale}em`,
+            animation: `float ${duration}s ease-in-out infinite`,
+            animationDelay: `${delay}s`
+        });
+        
+        emojiContainer.appendChild(emojiElement);
+        emojiElements.push({
+            element: emojiElement,
+            x: initialX,
+            y: initialY,
+            speedX: 0,
+            speedY: 0
+        });
     }
-    25% {
-        transform: translate(5px, 0) rotate(3deg);
-    }
-    50% {
-        transform: translate(0, 10px) rotate(0deg);
-    }
-    75% {
-        transform: translate(-5px, 0) rotate(-3deg);
-    }
-}
 
-@keyframes glow {
-    0%, 100% {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    }
-    50% {
-        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8),
-                     0 0 30px rgba(255, 255, 255, 0.6);
-    }
-}
+    // Smooth mouse tracking
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        createSparkle(mouseX, mouseY);
+    });
 
-@keyframes sparkle-fade {
-    0% {
-        transform: scale(0) rotate(0deg);
-        opacity: 1;
+    // Create sparkle effect
+    function createSparkle(x, y) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.textContent = '✨';
+        sparkle.style.left = `${x}px`;
+        sparkle.style.top = `${y}px`;
+        document.body.appendChild(sparkle);
+        
+        setTimeout(() => sparkle.remove(), 1000);
     }
-    100% {
-        transform: scale(1) rotate(180deg);
-        opacity: 0;
+
+    // Smooth animation function
+    function animate() {
+        emojiElements.forEach(item => {
+            const rect = item.element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const deltaX = centerX - mouseX;
+            const deltaY = centerY - mouseY;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            if (distance < 200) {
+                const angle = Math.atan2(deltaY, deltaX);
+                const force = (200 - distance) / 200;
+                const targetSpeedX = Math.cos(angle) * force * 15;
+                const targetSpeedY = Math.sin(angle) * force * 15;
+                
+                item.speedX += (targetSpeedX - item.speedX) * 0.2;
+                item.speedY += (targetSpeedY - item.speedY) * 0.2;
+            } else {
+                item.speedX *= 0.9;
+                item.speedY *= 0.9;
+            }
+            
+            item.x += item.speedX;
+            item.y += item.speedY;
+            
+            item.element.style.transform = `translate(${item.speedX * 10}px, ${item.speedY * 10}px)`;
+        });
+        
+        frame = requestAnimationFrame(animate);
     }
-}
+
+    animate();
+});
