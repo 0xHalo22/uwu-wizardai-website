@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseX = e.clientX;
         mouseY = e.clientY;
         
-        // Create trail effect
         const currentTime = Date.now();
         if (currentTime - lastSparkleTime > sparkleInterval) {
             createEnhancedSparkle(mouseX, mouseY);
@@ -107,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const deltaY = centerY - mouseY;
             const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             
-            if (distance < 300) { // Increased interaction range
+            if (distance < 300) {
                 const angle = Math.atan2(deltaY, deltaX);
                 const force = (300 - distance) / 300;
                 const targetSpeedX = Math.cos(angle) * force * 20;
