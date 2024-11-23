@@ -157,24 +157,39 @@ function setupLighting() {
 }
 
 function setupControls() {
-    // Add click-to-start overlay
-    const startOverlay = document.createElement('div');
-    startOverlay.className = 'start-overlay';
-    startOverlay.innerHTML = `
-        <div class="start-content">
-            <h2>Click to Enter the Magical Realm</h2>
-            <p>ESC to exit | WASD to move | Trackpad to look around</p>
-        </div>
-    `;
-    document.body.appendChild(startOverlay);
+    console.log('Setting up controls...');
+    const loadingScreen = document.getElementById('loading-screen');
+    const startPrompt = document.getElementById('start-prompt');
+
+    // Show loading screen first
+    if (loadingScreen) {
+        setTimeout(() => {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                if (startPrompt) {
+                    startPrompt.classList.remove('hidden');
+                }
+            }, 1000);
+        }, 2000);
+    }
 
     // Handle start interaction
-    startOverlay.addEventListener('click', initializeControls);
-    
+    if (startPrompt) {
+        startPrompt.addEventListener('click', () => {
+            console.log('Start prompt clicked');
+            initializeControls();
+            startPrompt.classList.add('hidden');
+        });
+    }
+
     // Add escape handler
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Escape') {
             document.exitPointerLock();
+            if (startPrompt) {
+                startPrompt.classList.remove('hidden');
+            }
         }
     });
 }

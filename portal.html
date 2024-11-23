@@ -7,14 +7,29 @@
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="portal-styles.css">
-    <!-- Import Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.159.0/three.min.js"></script>
-    <!-- Regular script, not module -->
     <script defer src="portal.js"></script>
 </head>
 <body>
     <div id="portal-container">
         <canvas id="portal-canvas"></canvas>
+        <div id="loading-screen">
+            <div class="loading-content">
+                <div class="magic-circle">
+                    <span class="rune">✧</span>
+                    <span class="rune">⚝</span>
+                    <span class="rune">✦</span>
+                    <span class="rune">⚘</span>
+                </div>
+                <p>Opening Portal to Magical Realm...</p>
+            </div>
+        </div>
+        <div id="start-prompt" class="hidden">
+            <div class="start-content">
+                <h2>Click to Enter the Magical Realm</h2>
+                <p>ESC to exit | WASD to move | Trackpad to look around</p>
+            </div>
+        </div>
     </div>
     
     <nav id="menu">
