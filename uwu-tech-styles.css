@@ -55,6 +55,7 @@
     flex-direction: column;
     gap: 3rem;
     align-items: center;
+    overflow-y: visible;
 }
 
 .bot-card {
@@ -69,6 +70,7 @@
     backdrop-filter: blur(5px);
     transform: translateX(0);
     transition: all 0.3s ease;
+    margin-bottom: 2rem;
 }
 
 .bot-card:hover {
@@ -133,16 +135,16 @@
     }
 }
 
-/* Parallax effect for bot cards */
+/* Updated parallax effect for bot cards */
 @media (min-height: 800px) {
     .bot-card {
-        opacity: 0;
-        transform: translateY(50px);
-        transition: all 0.8s ease;
-    }
-
-    .bot-card.visible {
         opacity: 1;
         transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+
+    .bot-card:hover {
+        transform: translateX(10px);
+        background: rgba(255, 255, 255, 0.08);
     }
 }
