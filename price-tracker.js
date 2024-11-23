@@ -1,5 +1,4 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    // Initialize ticker content updating
+document.addEventListener('DOMContentLoaded', () => {
     const messages = [
         "UWU TOKEN: $0.000",
         "✨ DO YOU BELIEVE IN MAGIC? ✨",
@@ -8,11 +7,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         "✨ ENCHANTING THE DIGITAL REALM ✨"
     ];
 
-    let tickerContent = document.querySelector('.ticker-content');
-    
-    // Duplicate messages to ensure smooth infinite scroll
-    function updateTickerContent() {
+    function createTickerContent() {
+        const tickerContent = document.querySelector('.ticker-content');
+        
+        // Clear existing content
         tickerContent.innerHTML = '';
+        
+        // Add messages twice to ensure smooth infinite scroll
         [...messages, ...messages].forEach(message => {
             const span = document.createElement('span');
             span.textContent = message;
@@ -20,16 +21,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    updateTickerContent();
+    function resetAnimation() {
+        const ticker = document.querySelector('.ticker-content');
+        ticker.style.animation = 'none';
+        ticker.offsetHeight; // Trigger reflow
+        ticker.style.animation = 'ticker 30s linear infinite';
+    }
 
-    // Function to connect to Solana and fetch price
+    // Initial setup
+    createTickerContent();
+
+    // Reset animation when it completes
+    document.querySelector('.ticker-content').addEventListener('animationend', () => {
+        resetAnimation();
+    });
+
+    // Recreate ticker content every minute to ensure smooth running
+    setInterval(createTickerContent, 60000);
+
+    // Initialize Solana connection
     async function initializeSolanaConnection() {
         try {
             const connection = new solanaWeb3.Connection(
                 'https://api.mainnet-beta.solana.com'
             );
             console.log('Connected to Solana mainnet');
-            // Will add price fetching logic here when you provide token details
+            // Price fetching logic will be added here
         } catch (error) {
             console.error('Error connecting to Solana:', error);
         }
@@ -37,7 +54,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initialize Solana connection
     initializeSolanaConnection();
-
-    // Update messages every minute (you can adjust the interval)
-    setInterval(updateTickerContent, 60000);
 });
