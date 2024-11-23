@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    background: linear-gradient(to bottom, #0a0a0f, #1a1a2e);
     color: #fff;
     overflow: hidden;
     min-height: 100vh;
@@ -14,9 +14,14 @@ nav#menu {
     width: 100%;
     text-align: center;
     z-index: 10;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
     padding: 10px 0;
+    transition: all 0.3s ease;
+}
+
+nav#menu:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 nav#menu ul {
@@ -33,16 +38,18 @@ nav#menu ul li {
 nav#menu ul li a {
     text-decoration: none;
     font-weight: bold;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 1.2em;
     transition: all 0.3s;
-    padding: 5px 10px;
+    padding: 5px 15px;
     border-radius: 15px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 nav#menu ul li a:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     color: #fff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
 }
 
 main#content {
@@ -58,8 +65,7 @@ main#content {
     font-size: 3.5em;
     font-weight: 300;
     margin-bottom: 20px;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    animation: glow 2s ease-in-out infinite;
+    animation: title-glow 3s ease-in-out infinite;
 }
 
 .description p {
@@ -85,14 +91,22 @@ main#content {
     user-select: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
 }
 
 .sparkle {
     position: absolute;
     pointer-events: none;
-    animation: sparkle-fade 1s ease-in-out forwards;
+    animation: enhanced-sparkle-fade 1.5s ease-out forwards;
     z-index: 2;
+    mix-blend-mode: screen;
+}
+
+.magic-burst {
+    position: absolute;
+    pointer-events: none;
+    z-index: 2;
+    animation: burst 0.8s ease-out forwards;
 }
 
 @keyframes float {
@@ -100,33 +114,55 @@ main#content {
         transform: translate(0, -10px) rotate(0deg);
     }
     25% {
-        transform: translate(5px, 0) rotate(3deg);
+        transform: translate(5px, 0) rotate(5deg);
     }
     50% {
         transform: translate(0, 10px) rotate(0deg);
     }
     75% {
-        transform: translate(-5px, 0) rotate(-3deg);
+        transform: translate(-5px, 0) rotate(-5deg);
     }
 }
 
-@keyframes glow {
+@keyframes title-glow {
     0%, 100% {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.3),
+                     0 0 40px rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.95);
     }
     50% {
-        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8),
-                     0 0 30px rgba(255, 255, 255, 0.6);
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.5),
+                     0 0 60px rgba(255, 255, 255, 0.3),
+                     0 0 80px rgba(255, 255, 255, 0.2);
+        color: #fff;
     }
 }
 
-@keyframes sparkle-fade {
+@keyframes enhanced-sparkle-fade {
     0% {
         transform: scale(0) rotate(0deg);
         opacity: 1;
     }
-    100% {
+    50% {
         transform: scale(1) rotate(180deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes burst {
+    0% {
+        transform: scale(0.1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(2) rotate(45deg);
         opacity: 0;
     }
 }
