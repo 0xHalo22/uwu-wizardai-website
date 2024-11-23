@@ -1,94 +1,29 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const emojiContainer = document.getElementById('emoji-container');
-    const emojis = ['🧙‍♂️', '🔮', '🌙', '✨', '⭐', '🌟', '💫']; // Added more magical emojis
-    const emojiElements = [];
-    const numberOfEmojis = 200; // More emojis!
-    let mouseX = 0;
-    let mouseY = 0;
-    let frame;
-
-    // Create and add emoji elements
-    for (let i = 0; i < numberOfEmojis; i++) {
-        const emojiElement = document.createElement('div');
-        emojiElement.className = 'emoji';
-        emojiElement.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        
-        // Random initial positions and properties
-        const initialX = Math.random() * window.innerWidth;
-        const initialY = Math.random() * window.innerHeight;
-        const scale = 0.5 + Math.random() * 1.5;
-        const duration = 4 + Math.random() * 4;
-        const delay = Math.random() * -duration;
-        
-        Object.assign(emojiElement.style, {
-            left: `${initialX}px`,
-            top: `${initialY}px`,
-            fontSize: `${scale}em`,
-            animation: `float ${duration}s ease-in-out infinite`,
-            animationDelay: `${delay}s`
-        });
-        
-        emojiContainer.appendChild(emojiElement);
-        emojiElements.push({
-            element: emojiElement,
-            x: initialX,
-            y: initialY,
-            speedX: 0,
-            speedY: 0
-        });
-    }
-
-    // Smooth mouse tracking
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        createSparkle(mouseX, mouseY);
-    });
-
-    // Create sparkle effect
-    function createSparkle(x, y) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        sparkle.textContent = '✨';
-        sparkle.style.left = `${x}px`;
-        sparkle.style.top = `${y}px`;
-        document.body.appendChild(sparkle);
-        
-        setTimeout(() => sparkle.remove(), 1000);
-    }
-
-    // Smooth animation function
-    function animate() {
-        emojiElements.forEach(item => {
-            const rect = item.element.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            
-            const deltaX = centerX - mouseX;
-            const deltaY = centerY - mouseY;
-            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            
-            if (distance < 200) {
-                const angle = Math.atan2(deltaY, deltaX);
-                const force = (200 - distance) / 200;
-                const targetSpeedX = Math.cos(angle) * force * 15;
-                const targetSpeedY = Math.sin(angle) * force * 15;
-                
-                item.speedX += (targetSpeedX - item.speedX) * 0.2;
-                item.speedY += (targetSpeedY - item.speedY) * 0.2;
-            } else {
-                item.speedX *= 0.9;
-                item.speedY *= 0.9;
-            }
-            
-            item.x += item.speedX;
-            item.y += item.speedY;
-            
-            item.element.style.transform = `translate(${item.speedX * 10}px, ${item.speedY * 10}px)`;
-        });
-        
-        frame = requestAnimationFrame(animate);
-    }
-
-    animate();
-});
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UwU Interactive Website</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <nav id="menu">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#uwu-tech">UwU Tech</a></li>
+            <li><a href="https://twitter.com" target="_blank">Twitter</a></li>
+            <li><a href="https://telegram.org" target="_blank">Telegram</a></li>
+        </ul>
+    </nav>
+    <main id="content">
+        <div class="description">
+            <h1>Welcome to UwU</h1>
+            <p>Floating elegantly in the cosmos, full of magic and tech wonder.</p>
+            <p>The wizards have something special for you, if you dare explore.</p>
+        </div>
+    </main>
+    <div id="emoji-container"></div>
+    <div id="sparkle-container"></div>
+</body>
+</html>
