@@ -1,3 +1,7 @@
+const { Scene, PerspectiveCamera, WebGLRenderer, BufferGeometry, Float32BufferAttribute, PointsMaterial, Points, 
+    IcosahedronGeometry, OctahedronGeometry, TetrahedronGeometry, MeshPhongMaterial, Mesh, 
+    AmbientLight, DirectionalLight, PointLight, Vector3, FogExp2 } = window.THREE;
+
 let scene, camera, renderer, clock;
 let loadingScreen, controlsHint;
 let moveForward = false;
@@ -6,25 +10,22 @@ let moveLeft = false;
 let moveRight = false;
 let moveUp = false;
 let moveDown = false;
-let velocity = new THREE.Vector3();
-let direction = new THREE.Vector3();
+let velocity = new Vector3();
+let direction = new Vector3();
 let particles = [];
 let islands = [];
 
 function init() {
     console.log('Initializing enhanced portal...');
     
-    // Scene setup
-    scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x000000, 0.001);
+    scene = new Scene();
+    scene.fog = new FogExp2(0x000000, 0.001);
     
-    // Camera setup
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 30);
     
-    clock = new THREE.Clock();
+    clock = new window.THREE.Clock();
 
-    // Renderer setup
     setupRenderer();
     setupStarfield();
     setupFloatingIslands();
@@ -32,12 +33,11 @@ function init() {
     setupLighting();
     setupControls();
 
-    // Start animation
     animate();
 }
 
 function setupRenderer() {
-    renderer = new THREE.WebGLRenderer({
+    renderer = new WebGLRenderer({
         canvas: document.querySelector('#portal-canvas'),
         antialias: true
     });
@@ -47,7 +47,7 @@ function setupRenderer() {
 }
 
 function setupStarfield() {
-    const starGeometry = new THREE.BufferGeometry();
+    const starGeometry = new BufferGeometry();
     const starVertices = [];
     
     for(let i = 0; i < 10000; i++) {
@@ -58,26 +58,26 @@ function setupStarfield() {
     }
     
     starGeometry.setAttribute('position', 
-        new THREE.Float32BufferAttribute(starVertices, 3));
+        new Float32BufferAttribute(starVertices, 3));
     
-    const starMaterial = new THREE.PointsMaterial({
+    const starMaterial = new PointsMaterial({
         color: 0xFFFFFF,
         size: 0.5,
         transparent: true
     });
     
-    const starField = new THREE.Points(starGeometry, starMaterial);
+    const starField = new Points(starGeometry, starMaterial);
     scene.add(starField);
 }
 
 function setupFloatingIslands() {
     const islandGeometries = [
-        new THREE.IcosahedronGeometry(5, 1),
-        new THREE.OctahedronGeometry(4, 2),
-        new THREE.TetrahedronGeometry(6, 1)
+        new IcosahedronGeometry(5, 1),
+        new OctahedronGeometry(4, 2),
+        new TetrahedronGeometry(6, 1)
     ];
 
-    const crystalMaterial = new THREE.MeshPhongMaterial({
+    const crystalMaterial = new MeshPhongMaterial({
         color: 0x3366ff,
         shininess: 100,
         transparent: true,
@@ -87,7 +87,7 @@ function setupFloatingIslands() {
 
     for(let i = 0; i < 7; i++) {
         const geometry = islandGeometries[Math.floor(Math.random() * islandGeometries.length)];
-        const island = new THREE.Mesh(geometry, crystalMaterial);
+        const island = new Mesh(geometry, crystalMaterial);
         
         island.position.set(
             (Math.random() - 0.5) * 100,
@@ -112,7 +112,7 @@ function setupParticles() {
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
     
-    const geometry = new THREE.BufferGeometry();
+    const geometry = new BufferGeometry();
     
     for(let i = 0; i < particleCount * 3; i += 3) {
         positions[i] = (Math.random() - 0.5) * 100;
@@ -125,34 +125,34 @@ function setupParticles() {
         colors[i + 2] = 1;
     }
     
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
     
-    const material = new THREE.PointsMaterial({
+    const material = new PointsMaterial({
         size: 0.5,
         vertexColors: true,
         transparent: true,
         opacity: 0.8,
-        blending: THREE.AdditiveBlending
+        blending: window.THREE.AdditiveBlending
     });
     
-    const particleSystem = new THREE.Points(geometry, material);
+    const particleSystem = new Points(geometry, material);
     particles.push(particleSystem);
     scene.add(particleSystem);
 }
 
 function setupLighting() {
-    const ambientLight = new THREE.AmbientLight(0x222244);
+    const ambientLight = new AmbientLight(0x222244);
     scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1);
+    const mainLight = new DirectionalLight(0xCCDDFF, 1);
     mainLight.position.set(10, 10, 10);
     scene.add(mainLight);
 
     // Add some colored point lights
     const colors = [0x3366ff, 0xff6633, 0x33ff66];
     colors.forEach((color, index) => {
-        const light = new THREE.PointLight(color, 1, 50);
+        const light = new PointLight(color, 1, 50);
         light.position.set(
             Math.cos(index * Math.PI * 2 / 3) * 30,
             Math.sin(index * Math.PI * 2 / 3) * 30,
@@ -239,4 +239,6 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-window.addEventListener('load', init);
+window.addEventListener('load', () => {
+    setTimeout(init, 100);
+});
