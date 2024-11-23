@@ -1,0 +1,94 @@
+/* Styles for UwU Interactive Website */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    overflow: hidden;
+}
+
+nav#menu {
+    position: fixed;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+}
+
+nav#menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav#menu ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav#menu ul li a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #333;
+    font-size: 1.2em;
+    transition: color 0.3s;
+}
+
+nav#menu ul li a:hover {
+    color: #666;
+}
+
+main#content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 5;
+}
+
+.description h1 {
+    font-size: 3em;
+    font-weight: 300;
+    margin-bottom: 20px;
+}
+
+.description p {
+    font-size: 1.5em;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#emoji-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.emoji {
+    position: absolute;
+    font-size: 2em;
+    user-select: none;
+    transition: transform 0.1s ease;
+}
+
+/* Animations for emojis to move away from mouse */
+body:hover .emoji {
+    transition: transform 0.2s ease;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(-10px);
+    }
+    50% {
+        transform: translateY(10px);
+    }
+}
