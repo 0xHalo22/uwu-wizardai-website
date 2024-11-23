@@ -6,13 +6,13 @@ body {
 .main-wizard {
     position: relative;
     text-align: center;
-    padding-top: 80px;  /* Space for nav bar */
+    padding-top: 80px;
     margin-bottom: 1rem;
     z-index: 2;
 }
 
 .main-wizard-emoji {
-    font-size: 20em;  /* Much bigger! */
+    font-size: 15em;
     display: inline-block;
     animation: wizard-breathe 4s ease-in-out infinite;
     filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.2));
@@ -54,7 +54,7 @@ body {
 .hero-text h1 {
     font-size: 3.5em;
     margin-bottom: 1rem;
-    background: linear-gradient(45deg, #fff, #e0e0ff);
+    background: linear-gradient(45deg, #000000, #89CFF0);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
