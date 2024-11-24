@@ -161,34 +161,26 @@ function setupControls() {
     const loadingScreen = document.getElementById('loading-screen');
     const startPrompt = document.getElementById('start-prompt');
 
-    // Show loading screen first
+    // Initial setup
     if (loadingScreen) {
-        setTimeout(() => {
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                if (startPrompt) {
-                    startPrompt.classList.remove('hidden');
-                }
-            }, 1000);
-        }, 2000);
+        loadingScreen.style.opacity = '0';
+        loadingScreen.style.display = 'none';
     }
 
     // Handle start interaction
-    if (startPrompt) {
-        startPrompt.addEventListener('click', () => {
-            console.log('Start prompt clicked');
+    document.addEventListener('click', () => {
+        if (startPrompt) {
+            startPrompt.style.display = 'none';
             initializeControls();
-            startPrompt.classList.add('hidden');
-        });
-    }
+        }
+    });
 
     // Add escape handler
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Escape') {
             document.exitPointerLock();
             if (startPrompt) {
-                startPrompt.classList.remove('hidden');
+                startPrompt.style.display = 'flex';
             }
         }
     });
@@ -208,22 +200,26 @@ function initializeControls() {
     document.addEventListener('keyup', onKeyUp);
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('pointerlockchange', onPointerLockChange);
-    document.addEventListener('mozpointerlockchange', onPointerLockChange);
-    document.addEventListener('webkitpointerlockchange', onPointerLockChange);
-    
-    // Hide the overlay
-    document.querySelector('.start-overlay').style.display = 'none';
 }
 
 function onPointerLockChange() {
+    const startPrompt = document.getElementById('start-prompt');
+    
     if (document.pointerLockElement === null) {
-        // Re-show the overlay when exiting pointer lock
-        document.querySelector('.start-overlay').style.display = 'flex';
+        // Show prompt when exiting pointer lock
+        if (startPrompt) {
+            startPrompt.style.display = 'flex';
+        }
         
-        // Remove control listeners when not in control mode
+        // Remove control listeners
         document.removeEventListener('keydown', onKeyDown);
         document.removeEventListener('keyup', onKeyUp);
         document.removeEventListener('mousemove', onMouseMove);
+    } else {
+        // Hide prompt when entering pointer lock
+        if (startPrompt) {
+            startPrompt.style.display = 'none';
+        }
     }
 }
 
