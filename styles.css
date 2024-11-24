@@ -1,8 +1,7 @@
-/* Base styles */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'VT323', monospace;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     background: linear-gradient(to bottom, #0a0a0f, #1a1a2e);
     color: #fff;
     overflow-y: auto !important;
@@ -10,7 +9,6 @@ body {
     padding-bottom: 60px;
 }
 
-/* Navigation */
 nav#menu {
     position: fixed;
     bottom: 0;
@@ -32,8 +30,13 @@ nav#menu ul {
     gap: 2rem;
 }
 
+nav#menu ul li {
+    display: inline;
+}
+
 nav#menu ul li a {
     text-decoration: none;
+    font-weight: bold;
     color: rgba(255, 255, 255, 0.8);
     font-size: 1.2em;
     transition: all 0.3s;
@@ -42,14 +45,11 @@ nav#menu ul li a {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
-nav#menu ul li a:hover,
-nav#menu ul li a.active {
+nav#menu ul li a:hover {
     color: #fff;
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.1);
 }
 
-/* Main content */
 main#content {
     position: absolute;
     top: 50%;
@@ -57,8 +57,6 @@ main#content {
     transform: translate(-50%, -50%);
     text-align: center;
     z-index: 5;
-    width: 90%;
-    max-width: 800px;
 }
 
 .description h1 {
@@ -71,11 +69,11 @@ main#content {
 .description p {
     font-size: 1.5em;
     line-height: 1.6;
-    margin: 0 auto 1em;
+    max-width: 600px;
+    margin: 0 auto;
     color: rgba(255, 255, 255, 0.9);
 }
 
-/* Containers */
 #emoji-container {
     position: fixed;
     top: 0;
@@ -110,7 +108,7 @@ main#content {
     animation: burst 0.8s ease-out forwards;
 }
 
-/* Ticker */
+/* Ticker styles */
 .ticker-wrap {
     width: 100%;
     height: 40px;
@@ -136,6 +134,7 @@ main#content {
     display: inline-flex;
     white-space: nowrap;
     animation: ticker 30s linear infinite;
+    font-family: 'VT323', monospace;
     font-size: 1.5em;
     color: #89CFF0;
     text-shadow: 0 0 10px rgba(137, 207, 240, 0.5);
@@ -146,10 +145,13 @@ main#content {
     padding: 0 50px;
 }
 
-/* Animations */
 @keyframes ticker {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 @keyframes enhanced-sparkle-fade {
@@ -193,26 +195,4 @@ main#content {
                      0 0 80px rgba(255, 255, 255, 0.2);
         color: #fff;
     }
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .description h1 {
-        font-size: 2.5em;
-    }
-
-    .description p {
-        font-size: 1.2em;
-    }
-
-    nav#menu ul {
-        gap: 1rem;
-    }
-}
-
-/* Performance optimizations */
-* {
-    backface-visibility: hidden;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }

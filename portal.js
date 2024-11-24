@@ -1,30 +1,22 @@
-// Global variables with clear naming
 let scene, camera, renderer, clock;
-let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false, moveUp = false, moveDown = false;
+let moveForward = false;
+let moveBackward = false;
+let moveLeft = false;
+let moveRight = false;
+let moveUp = false;
+let moveDown = false;
 let velocity = new THREE.Vector3();
 let direction = new THREE.Vector3();
-let particles = [], islands = [], sparkles = [];
+let particles = [];
+let islands = [];
 let isControlsEnabled = false;
 let magicTrail;
-let raycaster;
-let frame;
+let sparkles = [];
 
 function init() {
     console.log('Initializing portal...');
-    setupBasics();
-    setupRenderer();
-    setupStarfield();
-    setupFloatingIslands();
-    setupParticles();
-    setupLighting();
-    setupControls();
-    magicTrail = addMagicalTrail();
-    raycaster = new THREE.Raycaster();
-    animate();
-}
-
-function setupBasics() {
-    // Remove loading screen with smooth transition
+    
+    // Remove loading screen
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) {
         setTimeout(() => {
@@ -36,34 +28,27 @@ function setupBasics() {
         }, 2000);
     }
     
-    // Scene setup with enhanced fog
     scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x000000, 0.001);
     
-    // Camera setup with better initial position
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 30);
     
     clock = new THREE.Clock();
-}
 
-function setupRenderer() {
-    renderer = new THREE.WebGLRenderer({
-        canvas: document.querySelector('#portal-canvas'),
-        antialias: true,
-        alpha: true
-    });
-    
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0);
-    
-    // Enable shadow mapping
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    setupRenderer();
+    setupStarfield();
+    setupFloatingIslands();
+    setupParticles();
+    setupLighting();
+    setupControls();
+    magicTrail = addMagicalTrail();
+
+    animate();
 }
 
 function showStartPrompt() {
+    // Remove any existing overlay
     const existingOverlay = document.querySelector('.overlay');
     if (existingOverlay) existingOverlay.remove();
     
@@ -73,14 +58,15 @@ function showStartPrompt() {
     const content = document.createElement('div');
     content.className = 'overlay-content';
     content.innerHTML = `
-        <h2>Enter the Magical Realm</h2>
-        <p>ESC to exit | WASD to move | Space/Shift for Up/Down | Mouse to look</p>
+        <h2>Click to Enter the Magical Realm</h2>
+        <p>ESC to exit | WASD to move | Trackpad to look around</p>
     `;
     
     overlay.appendChild(content);
     document.body.appendChild(overlay);
 
     overlay.addEventListener('click', () => {
+        console.log('Overlay clicked');
         const canvas = document.querySelector('#portal-canvas');
         if (canvas.requestPointerLock) {
             canvas.requestPointerLock();
@@ -90,120 +76,45 @@ function showStartPrompt() {
     });
 }
 
+function setupRenderer() {
+    renderer = new THREE.WebGLRenderer({
+        canvas: document.querySelector('#portal-canvas'),
+        antialias: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000);
+}
+
 function setupStarfield() {
     const starGeometry = new THREE.BufferGeometry();
-    const starCount = 15000;
-    const starVertices = new Float32Array(starCount * 3);
-    const starColors = new Float32Array(starCount * 3);
+    const starVertices = [];
+    const starColors = [];
     
-    for(let i = 0; i < starCount * 3; i += 3) {
-        // Random position in sphere
-        const radius = 1000;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(Math.random() * 2 - 1);
+    for(let i = 0; i < 15000; i++) {
+        const x = (Math.random() - 0.5) * 2000;
+        const y = (Math.random() - 0.5) * 2000;
+        const z = (Math.random() - 0.5) * 2000;
+        starVertices.push(x, y, z);
         
-        starVertices[i] = radius * Math.sin(phi) * Math.cos(theta);
-        starVertices[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
-        starVertices[i + 2] = radius * Math.cos(phi);
-        
-        // Enhanced color variation
         const blueHue = Math.random() * 0.2 + 0.8;
-        starColors[i] = blueHue * 0.5;
-        starColors[i + 1] = blueHue * 0.8;
-        starColors[i + 2] = blueHue;
+        starColors.push(blueHue, blueHue, 1);
     }
     
-    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-    starGeometry.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
+    starGeometry.setAttribute('position', 
+        new THREE.Float32BufferAttribute(starVertices, 3));
+    starGeometry.setAttribute('color',
+        new THREE.Float32BufferAttribute(starColors, 3));
     
     const starMaterial = new THREE.PointsMaterial({
         size: Math.random() * 2 + 0.5,
         vertexColors: true,
         transparent: true,
-        opacity: 0.8,
-        blending: THREE.AdditiveBlending
+        opacity: 0.8
     });
     
     const starField = new THREE.Points(starGeometry, starMaterial);
     scene.add(starField);
-}
-
-function setupLighting() {
-    // Ambient light for base illumination
-    const ambientLight = new THREE.AmbientLight(0x222244, 0.5);
-    scene.add(ambientLight);
-
-    // Main directional light with shadows
-    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1);
-    mainLight.position.set(10, 10, 10);
-    mainLight.castShadow = true;
-    mainLight.shadow.mapSize.width = 2048;
-    mainLight.shadow.mapSize.height = 2048;
-    scene.add(mainLight);
-
-    // Colored point lights for atmosphere
-    const colors = [0x3366ff, 0x00aaff, 0x4422ff];
-    colors.forEach((color, index) => {
-        const light = new THREE.PointLight(color, 1, 50);
-        const angle = (index / colors.length) * Math.PI * 2;
-        light.position.set(
-            Math.cos(angle) * 30,
-            Math.sin(angle) * 30,
-            0
-        );
-        scene.add(light);
-    });
-}
-
-function setupControls() {
-    document.addEventListener('pointerlockchange', () => {
-        if (document.pointerLockElement === null) {
-            isControlsEnabled = false;
-            showStartPrompt();
-        }
-    });
-
-    // Movement controls
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup', onKeyUp);
-    document.addEventListener('mousemove', onMouseMove);
-}function onKeyDown(event) {
-    if (!isControlsEnabled) return;
-    
-    switch(event.code) {
-        case 'KeyW': moveForward = true; break;
-        case 'KeyS': moveBackward = true; break;
-        case 'KeyA': moveLeft = true; break;
-        case 'KeyD': moveRight = true; break;
-        case 'Space': moveUp = true; break;
-        case 'ShiftLeft': moveDown = true; break;
-    }
-}
-
-function onKeyUp(event) {
-    if (!isControlsEnabled) return;
-    
-    switch(event.code) {
-        case 'KeyW': moveForward = false; break;
-        case 'KeyS': moveBackward = false; break;
-        case 'KeyA': moveLeft = false; break;
-        case 'KeyD': moveRight = false; break;
-        case 'Space': moveUp = false; break;
-        case 'ShiftLeft': moveDown = false; break;
-    }
-}
-
-function onMouseMove(event) {
-    if (!isControlsEnabled) return;
-    
-    if (document.pointerLockElement === document.querySelector('#portal-canvas')) {
-        const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-        const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-        
-        camera.rotation.y -= movementX * 0.002;
-        camera.rotation.x -= movementY * 0.002;
-        camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
-    }
 }
 
 function setupFloatingIslands() {
@@ -211,24 +122,40 @@ function setupFloatingIslands() {
         new THREE.IcosahedronGeometry(4, 1),
         new THREE.OctahedronGeometry(5, 2),
         new THREE.TetrahedronGeometry(6, 1),
-        new THREE.IcosahedronGeometry(5, 2)
+        new THREE.IcosahedronBufferGeometry(5, 2)
     ];
 
-    const createCrystalMaterial = (color, opacity) => new THREE.MeshPhongMaterial({
-        color,
-        shininess: 90,
-        transparent: true,
-        opacity,
-        emissive: new THREE.Color(color).multiplyScalar(0.2),
-        emissiveIntensity: 0.5,
-        side: THREE.DoubleSide,
-        flatShading: true
-    });
-
     const crystalMaterials = [
-        createCrystalMaterial(0x3366ff, 0.6),
-        createCrystalMaterial(0x00aaff, 0.7),
-        createCrystalMaterial(0x4422ff, 0.5)
+        new THREE.MeshPhongMaterial({
+            color: 0x3366ff,
+            shininess: 100,
+            transparent: true,
+            opacity: 0.6,
+            emissive: 0x112244,
+            emissiveIntensity: 0.5,
+            side: THREE.DoubleSide,
+            flatShading: true
+        }),
+        new THREE.MeshPhongMaterial({
+            color: 0x00aaff,
+            shininess: 90,
+            transparent: true,
+            opacity: 0.7,
+            emissive: 0x001133,
+            emissiveIntensity: 0.6,
+            side: THREE.DoubleSide,
+            flatShading: true
+        }),
+        new THREE.MeshPhongMaterial({
+            color: 0x4422ff,
+            shininess: 80,
+            transparent: true,
+            opacity: 0.5,
+            emissive: 0x221133,
+            emissiveIntensity: 0.4,
+            side: THREE.DoubleSide,
+            flatShading: true
+        })
     ];
 
     for(let i = 0; i < 12; i++) {
@@ -237,7 +164,6 @@ function setupFloatingIslands() {
         
         const crystal = new THREE.Mesh(geometry, material);
         
-        // Position in circular pattern with variation
         const radius = 30 + Math.random() * 40;
         const theta = (i / 12) * Math.PI * 2;
         crystal.position.set(
@@ -260,12 +186,8 @@ function setupFloatingIslands() {
             floatSpeed: 0.001 + Math.random() * 0.002,
             floatOffset: Math.random() * Math.PI * 2,
             pulseSpeed: 0.001 + Math.random() * 0.002,
-            originalScale: scale,
-            originalColor: material.color.clone()
+            originalScale: scale
         };
-        
-        crystal.castShadow = true;
-        crystal.receiveShadow = true;
         
         islands.push(crystal);
         scene.add(crystal);
@@ -350,6 +272,7 @@ function addMagicalTrail() {
 
 function updateMagicalTrail(trail) {
     const positions = trail.geometry.attributes.position.array;
+    const colors = trail.geometry.attributes.color.array;
     
     for(let i = positions.length - 1; i >= 3; i--) {
         positions[i] = positions[i - 3];
@@ -362,35 +285,103 @@ function updateMagicalTrail(trail) {
     trail.geometry.attributes.position.needsUpdate = true;
 }
 
+function setupLighting() {
+    const ambientLight = new THREE.AmbientLight(0x222244, 0.5);
+    scene.add(ambientLight);
+
+    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1);
+    mainLight.position.set(10, 10, 10);
+    scene.add(mainLight);
+
+    const colors = [0x3366ff, 0x00aaff, 0x4422ff];
+    colors.forEach((color, index) => {
+        const light = new THREE.PointLight(color, 1, 50);
+        light.position.set(
+            Math.cos(index * Math.PI * 2 / 3) * 30,
+            Math.sin(index * Math.PI * 2 / 3) * 30,
+            0
+        );
+        scene.add(light);
+    });
+}
+
+function setupControls() {
+    document.addEventListener('pointerlockchange', () => {
+        if (document.pointerLockElement === null) {
+            isControlsEnabled = false;
+            showStartPrompt();
+        }
+    });
+
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+    document.addEventListener('mousemove', onMouseMove);
+}
+
+function onKeyDown(event) {
+    if (!isControlsEnabled) return;
+    
+    switch(event.code) {
+        case 'KeyW': moveForward = true; break;
+        case 'KeyS': moveBackward = true; break;
+        case 'KeyA': moveLeft = true; break;
+        case 'KeyD': moveRight = true; break;
+        case 'Space': moveUp = true; break;
+        case 'ShiftLeft': moveDown = true; break;
+    }
+}
+
+function onKeyUp(event) {
+    if (!isControlsEnabled) return;
+    
+    switch(event.code) {
+        case 'KeyW': moveForward = false; break;
+        case 'KeyS': moveBackward = false; break;
+        case 'KeyA': moveLeft = false; break;
+        case 'KeyD': moveRight = false; break;
+        case 'Space': moveUp = false; break;
+        case 'ShiftLeft': moveDown = false; break;
+    }
+}
+
+function onMouseMove(event) {
+    if (!isControlsEnabled) return;
+    
+    if (document.pointerLockElement === document.querySelector('#portal-canvas')) {
+        const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+        const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+        
+        camera.rotation.y -= movementX * 0.002;
+        camera.rotation.x -= movementY * 0.002;
+        camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
+    }
+}
+
 function animate() {
     requestAnimationFrame(animate);
     const delta = clock.getDelta();
     const time = Date.now() * 0.001;
 
     if (isControlsEnabled) {
-        // Movement
         direction.z = Number(moveForward) - Number(moveBackward);
         direction.x = Number(moveRight) - Number(moveLeft);
         direction.y = Number(moveUp) - Number(moveDown);
         direction.normalize();
 
-        const moveSpeed = 30 * delta;
-        if (moveForward || moveBackward) camera.translateZ(-direction.z * moveSpeed);
-        if (moveLeft || moveRight) camera.translateX(-direction.x * moveSpeed);
-        if (moveUp || moveDown) camera.translateY(direction.y * moveSpeed);
+        if (moveForward || moveBackward) camera.translateZ(-direction.z * 30 * delta);
+        if (moveLeft || moveRight) camera.translateX(-direction.x * 30 * delta);
+        if (moveUp || moveDown) camera.translateY(direction.y * 30 * delta);
 
         updateMagicalTrail(magicTrail);
     }
 
-    // Crystal animations
+    // Enhanced crystal animations
     islands.forEach((crystal) => {
         crystal.rotation.x += crystal.userData.rotationSpeed;
         crystal.rotation.y += crystal.userData.rotationSpeed * 1.5;
         
-        // Float motion
         crystal.position.y += Math.sin(time * crystal.userData.floatSpeed + crystal.userData.floatOffset) * 0.02;
         
-        // Pulse effect
         const pulse = Math.sin(time * crystal.userData.pulseSpeed) * 0.1 + 1;
         crystal.scale.set(
             crystal.userData.originalScale * pulse,
@@ -398,32 +389,31 @@ function animate() {
             crystal.userData.originalScale * pulse
         );
         
-        // Material effects
         if (crystal.material) {
             crystal.material.emissiveIntensity = 0.4 + Math.sin(time * 2) * 0.1;
             crystal.material.opacity = 0.6 + Math.sin(time * 3) * 0.1;
         }
     });
 
-    // Particle animations
+    // Enhanced particle animations
     particles.forEach((particle) => {
         if (particle.userData.parentCrystal) {
             particle.rotation.y += particle.userData.rotationSpeed;
             particle.rotation.z += particle.userData.rotationSpeed * 0.5;
+        } else {
+            particle.rotation.y += 0.0005;
         }
     });
 
     renderer.render(scene, camera);
 }
 
-// Handle window resizing
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Initialize on load
 window.addEventListener('load', () => {
     setTimeout(init, 100);
 });

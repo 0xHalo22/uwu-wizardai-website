@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UwU Wizard AI</title>
+    <title>UwU Interactive Website</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/@solana/web3.js"></script>
+    <script defer src="script.js"></script>
+    <script defer src="price-tracker.js"></script>
 </head>
 <body>
     <div class="ticker-wrap">
         <div class="ticker">
             <div class="ticker-content">
-                UWU TOKEN: $0.00 ✨ DO YOU BELIEVE IN MAGIC? ✨ 24H VOLUME: $0.00 🌟
-                THE WIZARDS ARE GATHERING 🌟
+                <span>UWU TOKEN: $0.00</span>
+                <span>✨ DO YOU BELIEVE IN MAGIC? ✨</span>
+                <span>24H VOLUME: $0.00</span>
+                <span>🌟 THE WIZARDS ARE GATHERING 🌟</span>
             </div>
         </div>
     </div>
 
-    <main id="content" role="main">
+    <main id="content">
         <div class="description">
             <h1>Welcome to UwU</h1>
             <p>Floating elegantly in the cosmos, full of magic and tech wonder.</p>
@@ -27,18 +32,15 @@
 
     <nav id="menu">
         <ul>
-            <li><a href="#" class="active">Home</a></li>
+            <li><a href="#">Home</a></li>
             <li><a href="uwu-tech.html">UwU Tech</a></li>
             <li><a href="https://x.com/uwuwizardai" target="_blank">Twitter</a></li>
             <li><a href="https://t.me/uwuwizardportal" target="_blank">Telegram</a></li>
             <li><a href="portal.html">Portal</a></li>
         </ul>
     </nav>
-
+    
     <div id="emoji-container"></div>
     <div id="sparkle-container"></div>
-
-    <script src="script.js"></script>
-    <script src="price-tracker.js"></script>
 </body>
 </html>
