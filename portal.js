@@ -14,6 +14,18 @@ let isControlsEnabled = false;
 function init() {
     console.log('Initializing portal...');
     
+    // Remove loading screen
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        setTimeout(() => {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.remove();
+                showStartPrompt();
+            }, 500);
+        }, 2000);
+    }
+    
     scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x000000, 0.001);
     
@@ -32,73 +44,163 @@ function init() {
     animate();
 }
 
-// ... [keep all your existing setup functions the same until setupControls] ...
+function showStartPrompt() {
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    
+    overlay.innerHTML = `
+        <div class="overlay-content">
+            <h2>Click to Enter the Magical Realm</h2>
+            <p>ESC to exit | WASD to move | Trackpad to look around</p>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', startExperience);
+}
+
+function startExperience() {
+    const canvas = document.querySelector('#portal-canvas');
+    if (canvas.requestPointerLock) {
+        canvas.requestPointerLock();
+        isControlsEnabled = true;
+        const overlay = document.querySelector('.overlay');
+        if (overlay) overlay.remove();
+    }
+}
+
+function setupRenderer() {
+    renderer = new THREE.WebGLRenderer({
+        canvas: document.querySelector('#portal-canvas'),
+        antialias: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000);
+}
+
+function setupStarfield() {
+    const starGeometry = new THREE.BufferGeometry();
+    const starVertices = [];
+    
+    for(let i = 0; i < 10000; i++) {
+        const x = (Math.random() - 0.5) * 2000;
+        const y = (Math.random() - 0.5) * 2000;
+        const z = (Math.random() - 0.5) * 2000;
+        starVertices.push(x, y, z);
+    }
+    
+    starGeometry.setAttribute('position', 
+        new THREE.Float32BufferAttribute(starVertices, 3));
+    
+    const starMaterial = new THREE.PointsMaterial({
+        color: 0xFFFFFF,
+        size: 0.5,
+        transparent: true
+    });
+    
+    const starField = new THREE.Points(starGeometry, starMaterial);
+    scene.add(starField);
+}
+
+function setupFloatingIslands() {
+    const islandGeometries = [
+        new THREE.IcosahedronGeometry(5, 1),
+        new THREE.OctahedronGeometry(4, 2),
+        new THREE.TetrahedronGeometry(6, 1)
+    ];
+
+    const crystalMaterial = new THREE.MeshPhongMaterial({
+        color: 0x3366ff,
+        shininess: 100,
+        transparent: true,
+        opacity: 0.8,
+        emissive: 0x112244
+    });
+
+    for(let i = 0; i < 7; i++) {
+        const geometry = islandGeometries[Math.floor(Math.random() * islandGeometries.length)];
+        const island = new THREE.Mesh(geometry, crystalMaterial);
+        
+        island.position.set(
+            (Math.random() - 0.5) * 100,
+            (Math.random() - 0.5) * 100,
+            (Math.random() - 0.5) * 100
+        );
+        
+        island.rotation.set(
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            Math.random() * Math.PI
+        );
+        
+        island.scale.setScalar(Math.random() * 1.5 + 0.5);
+        islands.push(island);
+        scene.add(island);
+    }
+}
+
+function setupParticles() {
+    const particleCount = 1000;
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    
+    const geometry = new THREE.BufferGeometry();
+    
+    for(let i = 0; i < particleCount * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 100;
+        positions[i + 1] = (Math.random() - 0.5) * 100;
+        positions[i + 2] = (Math.random() - 0.5) * 100;
+        
+        colors[i] = Math.random() * 0.5;
+        colors[i + 1] = Math.random() * 0.5 + 0.5;
+        colors[i + 2] = 1;
+    }
+    
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    
+    const material = new THREE.PointsMaterial({
+        size: 0.5,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+    });
+    
+    const particleSystem = new THREE.Points(geometry, material);
+    particles.push(particleSystem);
+    scene.add(particleSystem);
+}
+
+function setupLighting() {
+    const ambientLight = new THREE.AmbientLight(0x222244);
+    scene.add(ambientLight);
+
+    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1);
+    mainLight.position.set(10, 10, 10);
+    scene.add(mainLight);
+
+    const colors = [0x3366ff, 0xff6633, 0x33ff66];
+    colors.forEach((color, index) => {
+        const light = new THREE.PointLight(color, 1, 50);
+        light.position.set(
+            Math.cos(index * Math.PI * 2 / 3) * 30,
+            Math.sin(index * Math.PI * 2 / 3) * 30,
+            0
+        );
+        scene.add(light);
+    });
+}
 
 function setupControls() {
-    console.log('Setting up controls...');
-    
-    // Create prompt overlay
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-    overlay.style.zIndex = '1000';
-    overlay.style.cursor = 'pointer';
-
-    const prompt = document.createElement('div');
-    prompt.style.color = '#89CFF0';
-    prompt.style.fontFamily = 'VT323, monospace';
-    prompt.style.textAlign = 'center';
-    prompt.style.padding = '2rem';
-    prompt.style.background = 'rgba(0, 0, 0, 0.7)';
-    prompt.style.borderRadius = '10px';
-    prompt.style.border = '1px solid rgba(137, 207, 240, 0.3)';
-    prompt.innerHTML = `
-        <h2 style="font-size: 2em; margin-bottom: 1rem;">Click to Enter the Magical Realm</h2>
-        <p style="font-size: 1.2em;">ESC to exit | WASD to move | Trackpad to look around</p>
-    `;
-
-    overlay.appendChild(prompt);
-    document.body.appendChild(overlay);
-
-    // Handle click to start
-    overlay.addEventListener('click', function() {
-        console.log('Overlay clicked');
-        const canvas = document.querySelector('#portal-canvas');
-        if (canvas.requestPointerLock) {
-            canvas.requestPointerLock();
-            this.style.display = 'none';
-            isControlsEnabled = true;
-            console.log('Controls enabled');
-        }
-    });
-
-    // Handle pointer lock change
-    document.addEventListener('pointerlockchange', function() {
+    document.addEventListener('pointerlockchange', () => {
         if (document.pointerLockElement === null) {
-            console.log('Pointer lock released');
-            overlay.style.display = 'flex';
             isControlsEnabled = false;
+            showStartPrompt();
         }
     });
 
-    // Add escape handler
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'Escape') {
-            console.log('Escape pressed');
-            if (document.exitPointerLock) {
-                document.exitPointerLock();
-            }
-        }
-    });
-
-    // Movement controls
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('keyup', onKeyUp);
     document.addEventListener('mousemove', onMouseMove);
