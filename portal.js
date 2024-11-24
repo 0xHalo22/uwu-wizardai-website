@@ -28,9 +28,11 @@ function removeLoadingScreen() {
 }
 
 function showStartPrompt() {
+    // Remove any existing overlay
     const existingOverlay = document.querySelector('.overlay');
     if (existingOverlay) existingOverlay.remove();
 
+    // Create the overlay again
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
     overlay.innerHTML = `
@@ -44,10 +46,25 @@ function showStartPrompt() {
         const canvas = document.querySelector('#portal-canvas');
         if (canvas.requestPointerLock) {
             canvas.requestPointerLock();
-            overlay.remove();
+            overlay.remove(); // Remove the overlay on click
             isControlsEnabled = true;
         }
     });
+}
+
+function setupControls() {
+    document.addEventListener('pointerlockchange', () => {
+        if (document.pointerLockElement === document.querySelector('#portal-canvas')) {
+            isControlsEnabled = true;
+        } else {
+            isControlsEnabled = false;
+            showStartPrompt(); // Re-show the overlay when exiting
+        }
+    });
+
+    document.addEventListener('keydown', (e) => handleKey(e, true));
+    document.addEventListener('keyup', (e) => handleKey(e, false));
+    document.addEventListener('mousemove', handleMouseMove);
 }
 
 function setupScene() {
