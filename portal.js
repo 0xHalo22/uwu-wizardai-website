@@ -45,28 +45,33 @@ function init() {
 }
 
 function showStartPrompt() {
+    // Remove any existing overlay
+    const existingOverlay = document.querySelector('.overlay');
+    if (existingOverlay) existingOverlay.remove();
+    
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
     
-    overlay.innerHTML = `
-        <div class="overlay-content">
-            <h2>Click to Enter the Magical Realm</h2>
-            <p>ESC to exit | WASD to move | Trackpad to look around</p>
-        </div>
+    const content = document.createElement('div');
+    content.className = 'overlay-content';
+    content.innerHTML = `
+        <h2>Click to Enter the Magical Realm</h2>
+        <p>ESC to exit | WASD to move | Trackpad to look around</p>
     `;
     
+    overlay.appendChild(content);
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', startExperience);
-}
 
-function startExperience() {
-    const canvas = document.querySelector('#portal-canvas');
-    if (canvas.requestPointerLock) {
-        canvas.requestPointerLock();
-        isControlsEnabled = true;
-        const overlay = document.querySelector('.overlay');
-        if (overlay) overlay.remove();
-    }
+    // Add click listener to the overlay
+    overlay.addEventListener('click', () => {
+        console.log('Overlay clicked');
+        const canvas = document.querySelector('#portal-canvas');
+        if (canvas.requestPointerLock) {
+            canvas.requestPointerLock();
+            overlay.remove();
+            isControlsEnabled = true;
+        }
+    });
 }
 
 function setupRenderer() {
@@ -82,21 +87,29 @@ function setupRenderer() {
 function setupStarfield() {
     const starGeometry = new THREE.BufferGeometry();
     const starVertices = [];
+    const starColors = [];
     
-    for(let i = 0; i < 10000; i++) {
+    for(let i = 0; i < 15000; i++) {
         const x = (Math.random() - 0.5) * 2000;
         const y = (Math.random() - 0.5) * 2000;
         const z = (Math.random() - 0.5) * 2000;
         starVertices.push(x, y, z);
+        
+        // Add variety to star colors
+        const blueHue = Math.random() * 0.2 + 0.8;
+        starColors.push(blueHue, blueHue, 1);
     }
     
     starGeometry.setAttribute('position', 
         new THREE.Float32BufferAttribute(starVertices, 3));
+    starGeometry.setAttribute('color',
+        new THREE.Float32BufferAttribute(starColors, 3));
     
     const starMaterial = new THREE.PointsMaterial({
-        color: 0xFFFFFF,
-        size: 0.5,
-        transparent: true
+        size: Math.random() * 2 + 0.5,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8
     });
     
     const starField = new THREE.Points(starGeometry, starMaterial);
@@ -112,10 +125,12 @@ function setupFloatingIslands() {
 
     const crystalMaterial = new THREE.MeshPhongMaterial({
         color: 0x3366ff,
-        shininess: 100,
+        shininess: 200,
         transparent: true,
-        opacity: 0.8,
-        emissive: 0x112244
+        opacity: 0.6,
+        emissive: 0x112244,
+        emissiveIntensity: 0.5,
+        side: THREE.DoubleSide
     });
 
     for(let i = 0; i < 7; i++) {
@@ -141,7 +156,7 @@ function setupFloatingIslands() {
 }
 
 function setupParticles() {
-    const particleCount = 1000;
+    const particleCount = 1500; // Increased count
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
     
@@ -152,16 +167,17 @@ function setupParticles() {
         positions[i + 1] = (Math.random() - 0.5) * 100;
         positions[i + 2] = (Math.random() - 0.5) * 100;
         
-        colors[i] = Math.random() * 0.5;
-        colors[i + 1] = Math.random() * 0.5 + 0.5;
-        colors[i + 2] = 1;
+        // More varied colors
+        colors[i] = Math.random() * 0.5 + 0.5; // More blue
+        colors[i + 1] = Math.random() * 0.5 + 0.5; // Some green
+        colors[i + 2] = 1; // Full blue
     }
     
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
     
     const material = new THREE.PointsMaterial({
-        size: 0.5,
+        size: 0.8,
         vertexColors: true,
         transparent: true,
         opacity: 0.8,
@@ -174,14 +190,14 @@ function setupParticles() {
 }
 
 function setupLighting() {
-    const ambientLight = new THREE.AmbientLight(0x222244);
+    const ambientLight = new THREE.AmbientLight(0x222244, 0.5);
     scene.add(ambientLight);
 
     const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1);
     mainLight.position.set(10, 10, 10);
     scene.add(mainLight);
 
-    const colors = [0x3366ff, 0xff6633, 0x33ff66];
+    const colors = [0x3366ff, 0x00aaff, 0x4422ff];
     colors.forEach((color, index) => {
         const light = new THREE.PointLight(color, 1, 50);
         light.position.set(
@@ -260,16 +276,19 @@ function animate() {
         if (moveUp || moveDown) camera.translateY(direction.y * 30 * delta);
     }
 
-    // Animate islands
+    // Animate islands with more varied movement
     islands.forEach((island, i) => {
-        island.rotation.x += 0.001;
-        island.rotation.y += 0.002;
+        island.rotation.x += 0.001 * (1 + i * 0.1);
+        island.rotation.y += 0.002 * (1 + i * 0.1);
         island.position.y += Math.sin(Date.now() * 0.001 + i) * 0.02;
+        // Add slight wobble
+        island.position.x += Math.sin(Date.now() * 0.0005 + i) * 0.01;
     });
 
-    // Animate particles
+    // Animate particles with more dynamic movement
     particles.forEach(particle => {
         particle.rotation.y += 0.0005;
+        particle.rotation.x += 0.0002;
     });
 
     renderer.render(scene, camera);
