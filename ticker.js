@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     let messages = [
-        "🪙 SOL: $0.00 | BTC: $0.00 | UWU: $0.000773 | VOL: $3201.67",
+        "🪙 SOL: $0.00 | BTC: $0.00 | $🧙: $0.000773 | VOL: $3201.67",
         "✨ DO YOU BELIEVE IN MAGIC? ✨",
         "🌟 THE WIZARDS ARE GATHERING 🌟",
         "✨ ENCHANTING THE DIGITAL REALM ✨",
