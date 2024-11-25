@@ -67,7 +67,7 @@ body {
     background: rgba(255, 255, 255, 0.07); /* More transparent for frosty effect */
     border-radius: 20px;
     padding: 2rem;
-    backdrop-filter: blur(15px); /* Increased blur for a frosty look */
+    backdrop-filter: blur(7px); /* Increased blur for a frosty look */
     border: 2px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 0 40px rgba(255, 255, 255, 0.4), 
                 0 0 80px rgba(255, 255, 255, 0.2), 

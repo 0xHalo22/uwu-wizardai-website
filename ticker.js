@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     let messages = [
-        "🪙 SOL: $0.00 | BTC: $0.00 | $🧙: Loading... | VOL: Loading...",
+        "🪙 SOL: $0.00 | BTC: $0.00 | $🧙: $0.000773 | VOL: $3201.67",
         "✨ DO YOU BELIEVE IN MAGIC? ✨",
         "🌟 THE WIZARDS ARE GATHERING 🌟",
         "✨ ENCHANTING THE DIGITAL REALM ✨",
@@ -73,26 +73,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function updatePriceData() {
         try {
-            // Fetch prices from CoinGecko and DexScreener
-            const [solResponse, btcResponse, dexResponse] = await Promise.all([
+            const [solResponse, btcResponse] = await Promise.all([
                 fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'),
-                fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'),
-                fetch('https://api.dexscreener.com/latest/dex/pairs/solana/3nqjfncizp9gsyjk2aqdch6gywceufcqz4l49efk2e78')
+                fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
             ]);
 
-            const [solData, btcData, dexData] = await Promise.all([
+            const [solData, btcData] = await Promise.all([
                 solResponse.json(),
-                btcResponse.json(),
-                dexResponse.json()
+                btcResponse.json()
             ]);
 
             const solPrice = solData.solana.usd.toFixed(2);
             const btcPrice = btcData.bitcoin.usd.toFixed(0);
-            const uwuPrice = dexData.pair.priceUsd.toFixed(6);
-            const volume = dexData.pair.volume.h24.toFixed(2);
 
-            // Update ticker messages
-            messages[0] = `🪙 SOL: $${solPrice} | BTC: $${btcPrice} | $🧙: $${uwuPrice} | VOL: $${volume}`;
+            messages[0] = `🪙 SOL: $${solPrice} | BTC: $${btcPrice} | $🧙: $0.000773 | VOL: $3201.67`;
             
             if (!isTickerPaused) {
                 createTickerContent();
@@ -118,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 overflow: hidden;
                 position: fixed;
                 top: 0;
-                z-index: 2000;
+                z-index: 2000; /* Changed from 10 to 2000 */
                 display: flex;
                 align-items: center;
             }
