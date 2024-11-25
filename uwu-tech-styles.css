@@ -41,10 +41,11 @@ body {
 .hero-section {
     z-index: 97;
     position: relative;
-    padding: 0 2rem;  /* Adjust padding to match the width of the lower boxes */
-    max-width: 1000px; /* Match this to the lower boxes */
+    padding: 0 1rem;
+    max-width: 1400px;
     margin: 0 auto;
     margin-bottom: 3rem;
+    width: 95%;
 }
 
 .hero-text h1 {
@@ -64,20 +65,21 @@ body {
     color: rgba(255, 255, 255, 0.9);
 }
 
-/* Tech Ecosystem Box - Added Styles for Glow and Blur */
+/* Tech Ecosystem Box */
 .tech-ecosystem-box {
-    background: rgba(255, 255, 255, 0.07); /* More transparent for frosty effect */
+    background: rgba(255, 255, 255, 0.07);
     border-radius: 20px;
-    padding: 2rem;
-    backdrop-filter: blur(7px); /* Increased blur for a frosty look */
+    padding: 2.5rem;
+    backdrop-filter: blur(7px);
     border: 2px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 0 40px rgba(255, 255, 255, 0.4), 
                 0 0 80px rgba(255, 255, 255, 0.2), 
-                inset 0 0 20px rgba(255, 255, 255, 0.3); /* Enhanced glow */
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
     text-align: center;
     color: #ffffff;
     z-index: 95;
     transition: all 0.3s ease;
+    width: 100%;
 }
 
 /* Bots Section */
@@ -174,49 +176,7 @@ body {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
-/* Navigation */
-nav#menu {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 1rem 0;
-    border-top: 1px solid rgba(137, 207, 240, 0.2);
-    z-index: 1999;
-}
-
-nav#menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-}
-
-nav#menu ul li a {
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    font-size: 1.1em;
-    transition: all 0.3s ease;
-}
-
-nav#menu ul li a:hover {
-    color: #fff;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-}
-
 /* Animations */
-@keyframes ticker {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-50%);
-    }
-}
-
 @keyframes float {
     0%, 100% {
         transform: translateY(-5px);
