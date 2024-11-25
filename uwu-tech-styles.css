@@ -48,6 +48,11 @@ body {
     width: 98vw;
 }
 
+.hero-text {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
 .hero-text h1 {
     width: 100%;
     max-width: 100%;
@@ -65,6 +70,8 @@ body {
     font-size: 1.2em;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.9);
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 /* Tech Ecosystem Box */
@@ -80,7 +87,8 @@ body {
                 inset 0 0 20px rgba(255, 255, 255, 0.3);
     text-align: center;
     color: #ffffff;
-    width: 98%;
+    width: 100%;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
