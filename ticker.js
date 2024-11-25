@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let isTickerPaused = false;
+    const TOKEN_CA = "FJXC6Y5HVkNQjHzRbUDiXMEmdXZe7mP7snS5yJmUpump";
 
     function createTickerContent() {
         const tickerContent = document.querySelector('.ticker-content');
@@ -18,9 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         tickerContent.innerHTML = '';
-
+        
         // Create multiple copies for seamless loop
-        const copies = 4;
+        const copies = 4; // Increase this number for longer loops
         for (let i = 0; i < copies; i++) {
             messages.forEach(message => {
                 const span = document.createElement('span');
@@ -31,25 +32,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const contentWidth = tickerContent.scrollWidth;
-        const duration = contentWidth / 50;
-
+        const viewportWidth = window.innerWidth;
+        const duration = contentWidth / 50; // Adjust speed here
+        
         tickerContent.style.animation = 'none';
         tickerContent.offsetHeight; // Trigger reflow
         tickerContent.style.animation = `ticker ${duration}s linear infinite`;
 
-        console.log("Ticker initialized with duration:", duration, "seconds");
+        // Add infinite loop handling
+        tickerContent.addEventListener('animationend', () => {
+            tickerContent.style.animation = 'none';
+            tickerContent.offsetHeight;
+            tickerContent.style.animation = `ticker ${duration}s linear infinite`;
+        });
     }
 
     function setupTickerInteraction() {
         const ticker = document.querySelector('.ticker-wrap');
-        if (!ticker) return;
+        if (!ticker) {
+            console.warn('Ticker wrap element not found');
+            return;
+        }
 
         ticker.addEventListener('mouseenter', () => {
             const content = ticker.querySelector('.ticker-content');
             if (content) {
                 isTickerPaused = true;
                 content.style.animationPlayState = 'paused';
-                console.log("Ticker paused");
             }
         });
 
@@ -58,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (content) {
                 isTickerPaused = false;
                 content.style.animationPlayState = 'running';
-                console.log("Ticker resumed");
             }
         });
     }
@@ -79,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const btcPrice = btcData.bitcoin.usd.toFixed(0);
 
             messages[0] = `🪙 SOL: $${solPrice} | BTC: $${btcPrice} | $🧙: $0.000773 | VOL: $3201.67`;
-
+            
             if (!isTickerPaused) {
                 createTickerContent();
             }
@@ -89,24 +97,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function addTickerStyles() {
+        const existingStyle = document.getElementById('ticker-styles');
+        if (existingStyle) return;
+
+        const style = document.createElement('style');
+        style.id = 'ticker-styles';
+        style.textContent = `
+            .ticker-wrap {
+                width: 100%;
+                height: 40px;
+                background: rgba(0, 0, 0, 0.8);
+                border-bottom: 1px solid rgba(137, 207, 240, 0.2);
+                overflow: hidden;
+                position: fixed;
+                top: 0;
+                z-index: 10;
+                display: flex;
+                align-items: center;
+            }
+
+            .ticker {
+                display: inline-flex;
+                align-items: center;
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+            }
+
+            .ticker-content {
+                display: inline-flex;
+                white-space: nowrap;
+                font-family: 'VT323', monospace;
+                font-size: 1.5em;
+                color: #89CFF0;
+                text-shadow: 0 0 10px rgba(137, 207, 240, 0.5);
+                padding: 0 20px;
+                transform: translateX(0);
+            }
+
+            .ticker-content span {
+                padding: 0 50px;
+                display: inline-block;
+            }
+
+            @keyframes ticker {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     function initialize() {
+        console.log('Initializing ticker...');
+        addTickerStyles();
         createTickerContent();
         setupTickerInteraction();
         updatePriceData();
-
-        // Update prices every 30 seconds
         setInterval(updatePriceData, 30000);
-
-        // Force ticker restart to address potential initial delay
-        setTimeout(() => {
-            const tickerContent = document.querySelector('.ticker-content');
-            if (tickerContent) {
-                const contentWidth = tickerContent.scrollWidth;
-                const duration = contentWidth / 50;
-                tickerContent.style.animation = `ticker ${duration}s linear infinite`;
-                console.log("Forced ticker restart with duration:", duration, "seconds");
-            }
-        }, 1000); // Adjust delay if needed
 
         // Handle window resize
         let resizeTimeout;
@@ -120,6 +169,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initialize after a brief moment
+    // Ensure styles are added immediately
+    addTickerStyles();
+    
+    // Wait a brief moment for DOM to be fully ready
     setTimeout(initialize, 100);
 });
