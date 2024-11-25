@@ -1,112 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const emojiContainer = document.getElementById('emoji-container');
-    const emojis = ['🧙‍♂️', '🔮', '🌙', '✨', '⭐', '🌟', '💫'];
-    const emojiElements = [];
-    const numberOfEmojis = 100;
-    let mouseX = 0;
-    let mouseY = 0;
-    let lastSparkleTime = 0;
-    const sparkleInterval = 50;
-    let frame;
-
-    // Create and add emoji elements
-    for (let i = 0; i < numberOfEmojis; i++) {
-        const emojiElement = document.createElement('div');
-        emojiElement.className = 'emoji';
-        emojiElement.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    // Parallax scrolling effect
+    const handleScroll = () => {
+        const cards = document.querySelectorAll('.bot-card');
         
-        const initialX = Math.random() * window.innerWidth;
-        const initialY = Math.random() * window.innerHeight;
-        const scale = 0.5 + Math.random() * 1.5;
-        const duration = 4 + Math.random() * 4;
-        const delay = Math.random() * -duration;
-        const rotation = Math.random() * 360;
-        
-        Object.assign(emojiElement.style, {
-            left: `${initialX}px`,
-            top: `${initialY}px`,
-            fontSize: `${scale}em`,
-            animation: `float ${duration}s ease-in-out infinite`,
-            animationDelay: `${delay}s`,
-            transform: `rotate(${rotation}deg)`
-        });
-        
-        emojiContainer.appendChild(emojiElement);
-        emojiElements.push({
-            element: emojiElement,
-            x: initialX,
-            y: initialY,
-            rotation: rotation,
-            speedX: 0,
-            speedY: 0,
-            rotationSpeed: (Math.random() - 0.5) * 2
-        });
-    }
-
-    // Enhanced mouse tracking with trail
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        
-        const currentTime = Date.now();
-        if (currentTime - lastSparkleTime > sparkleInterval) {
-            createSparkle(mouseX, mouseY);
-            lastSparkleTime = currentTime;
-        }
-    });
-
-    function createSparkle(x, y) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        sparkle.textContent = '✨';
-        
-        const offsetX = (Math.random() - 0.5) * 20;
-        const offsetY = (Math.random() - 0.5) * 20;
-        
-        Object.assign(sparkle.style, {
-            left: `${x + offsetX}px`,
-            top: `${y + offsetY}px`,
-            fontSize: `${0.5 + Math.random()}em`,
-            opacity: Math.random() * 0.5 + 0.5,
-            transform: `rotate(${Math.random() * 360}deg)`
-        });
-
-        document.body.appendChild(sparkle);
-        setTimeout(() => sparkle.remove(), 1000 + Math.random() * 500);
-    }
-
-    function animate() {
-        emojiElements.forEach(item => {
-            const rect = item.element.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
+        cards.forEach(card => {
+            const cardTop = card.getBoundingClientRect().top;
+            const speed = parseFloat(card.getAttribute('data-speed')) || 0.1;
+            const windowHeight = window.innerHeight;
             
-            const deltaX = centerX - mouseX;
-            const deltaY = centerY - mouseY;
-            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            
-            if (distance < 300) {
-                const angle = Math.atan2(deltaY, deltaX);
-                const force = (300 - distance) / 300;
-                const targetSpeedX = Math.cos(angle) * force * 20;
-                const targetSpeedY = Math.sin(angle) * force * 20;
-                
-                item.speedX += (targetSpeedX - item.speedX) * 0.2;
-                item.speedY += (targetSpeedY - item.speedY) * 0.2;
-                item.rotation += item.rotationSpeed;
-            } else {
-                item.speedX *= 0.95;
-                item.speedY *= 0.95;
+            if (cardTop < windowHeight * 0.8) {
+                card.classList.add('visible');
+                const yPos = (cardTop - windowHeight) * speed;
+                card.style.transform = `translateY(${yPos}px)`;
             }
-            
-            item.x += item.speedX;
-            item.y += item.speedY;
-            
-            item.element.style.transform = `translate(${item.speedX * 10}px, ${item.speedY * 10}px) rotate(${item.rotation}deg)`;
         });
-        
-        frame = requestAnimationFrame(animate);
-    }
+    };
 
-    animate();
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial check
 });

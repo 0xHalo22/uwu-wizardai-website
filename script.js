@@ -24,15 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const delay = Math.random() * -duration;
         const rotation = Math.random() * 360;
         
-        // Set CSS variables for animations
-        emojiElement.style.setProperty('--duration', `${duration}s`);
-        emojiElement.style.setProperty('--delay', `${delay}s`);
-        emojiElement.style.setProperty('--rotation', `${rotation}deg`);
-        
         Object.assign(emojiElement.style, {
             left: `${initialX}px`,
             top: `${initialY}px`,
             fontSize: `${scale}em`,
+            animation: `float ${duration}s ease-in-out infinite`,
+            animationDelay: `${delay}s`,
             transform: `rotate(${rotation}deg)`
         });
         
@@ -48,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Enhanced mouse tracking
+    // Enhanced mouse tracking with trail
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
@@ -126,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
             item.x += item.speedX;
             item.y += item.speedY;
             
-            // Combine floating animation with mouse movement
             item.element.style.transform = `translate(${item.speedX * 10}px, ${item.speedY * 10}px) rotate(${item.rotation}deg)`;
         });
         
