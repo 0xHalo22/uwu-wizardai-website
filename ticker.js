@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 overflow: hidden;
                 position: fixed;
                 top: 0;
-                z-index: 10;
+                z-index: 2000; /* Changed from 10 to 2000 */
                 display: flex;
                 align-items: center;
             }
