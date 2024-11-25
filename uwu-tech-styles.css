@@ -75,6 +75,8 @@ body {
 
 /* Main content sections */
 .hero-section {
+    z-index: 5;
+    position: relative; 
     padding: 2rem;
     margin-bottom: 3rem;
 }
