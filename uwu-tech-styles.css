@@ -81,23 +81,21 @@ body {
     margin-bottom: 3rem;
 }
 
-.hero-content {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
+.hero-section {
+    z-index: 5;
+    position: relative;
     padding: 2rem;
-    backdrop-filter: blur(10px);
-    max-width: 1000px;
-    margin: 0 auto;
-    text-align: center;
+    margin-bottom: 3rem;
 }
 
 .hero-text h1 {
     font-size: 3.5em;
     margin-bottom: 1rem;
-    background: linear-gradient(45deg, #000000, #89CFF0);
+    color: #ffffff; /* Changed to white */
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-text-fill-color: #ffffff; /* Ensure text is filled with white */
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.4); /* Keep glowing pulse effect */
 }
 
 .hero-text p {
@@ -105,6 +103,7 @@ body {
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.9);
 }
+
 
 .bots-section {
     padding: 0 2rem;
