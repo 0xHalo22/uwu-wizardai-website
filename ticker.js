@@ -20,20 +20,31 @@ document.addEventListener('DOMContentLoaded', () => {
         
         tickerContent.innerHTML = '';
         
-        [...messages, ...messages].forEach(message => {
-            const span = document.createElement('span');
-            span.textContent = message;
-            span.style.textShadow = `0 0 10px rgba(137, 207, 240, ${Math.random() * 0.3 + 0.2})`;
-            tickerContent.appendChild(span);
-        });
+        // Create multiple copies for seamless loop
+        const copies = 4; // Increase this number for longer loops
+        for (let i = 0; i < copies; i++) {
+            messages.forEach(message => {
+                const span = document.createElement('span');
+                span.textContent = message;
+                span.style.textShadow = `0 0 10px rgba(137, 207, 240, ${Math.random() * 0.3 + 0.2})`;
+                tickerContent.appendChild(span);
+            });
+        }
 
         const contentWidth = tickerContent.scrollWidth;
-        const baseSpeed = 100;
-        const duration = contentWidth / baseSpeed;
+        const viewportWidth = window.innerWidth;
+        const duration = contentWidth / 50; // Adjust speed here
         
         tickerContent.style.animation = 'none';
         tickerContent.offsetHeight; // Trigger reflow
         tickerContent.style.animation = `ticker ${duration}s linear infinite`;
+
+        // Add infinite loop handling
+        tickerContent.addEventListener('animationend', () => {
+            tickerContent.style.animation = 'none';
+            tickerContent.offsetHeight;
+            tickerContent.style.animation = `ticker ${duration}s linear infinite`;
+        });
     }
 
     function setupTickerInteraction() {
@@ -82,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Error fetching price data:', error);
-            // On error, keep existing content
             createTickerContent();
         }
     }
@@ -111,8 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 display: inline-flex;
                 align-items: center;
                 height: 100%;
-                width: fit-content;
-                padding-left: 100%;
+                width: 100%;
+                overflow: hidden;
             }
 
             .ticker-content {
@@ -123,15 +133,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 color: #89CFF0;
                 text-shadow: 0 0 10px rgba(137, 207, 240, 0.5);
                 padding: 0 20px;
+                transform: translateX(0);
             }
 
             .ticker-content span {
                 padding: 0 50px;
+                display: inline-block;
             }
 
             @keyframes ticker {
                 0% { transform: translateX(0); }
-                100% { transform: translateX(-100%); }
+                100% { transform: translateX(-50%); }
             }
         `;
         document.head.appendChild(style);
@@ -145,10 +157,15 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePriceData();
         setInterval(updatePriceData, 30000);
 
+        // Handle window resize
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            if (!isTickerPaused) {
-                createTickerContent();
-            }
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (!isTickerPaused) {
+                    createTickerContent();
+                }
+            }, 250);
         });
     }
 

@@ -15,7 +15,7 @@ body {
     overflow: hidden;
     position: fixed;
     top: 0;
-    z-index: 10;
+    z-index: 150;
     display: flex;
     align-items: center;
 }
@@ -75,14 +75,14 @@ body {
 
 /* Main content sections */
 .hero-section {
-    z-index: 5;
+    z-index: 100;
     position: relative; 
     padding: 2rem;
     margin-bottom: 3rem;
 }
 
 .hero-section {
-    z-index: 5;
+    z-index: 96;
     position: relative;
     padding: 2rem;
     margin-bottom: 3rem;
