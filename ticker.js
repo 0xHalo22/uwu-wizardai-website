@@ -1,3 +1,18 @@
+// Add these at the top of ticker.js
+const UWU_TOKEN_ADDRESS = 'FJXC6Y5HVkNQjHzRbUDiXMEmdXZe7mP7snS5yJmUpump';
+const connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com');
+
+async function getUwuPrice() {
+    try {
+        const response = await fetch(`https://public-api.birdeye.so/public/price?address=${UWU_TOKEN_ADDRESS}`);
+        const data = await response.json();
+        return data.data.value;
+    } catch (error) {
+        console.error('Error fetching UWU price:', error);
+        return null;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     let messages = [
         "🪙 SOL: $0.00 | BTC: $0.00 | UWU: $0.000773 | VOL: $3201.67",
@@ -67,8 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const btcData = await btcResponse.json();
             const btcPrice = btcData.bitcoin.usd.toFixed(0);
 
+            // Get UWU price
+            const uwuPrice = await getUwuPrice();
+            const uwuPriceFormatted = uwuPrice ? uwuPrice.toFixed(6) : '0.000773';
+
             // Update messages array
-            messages[0] = `🪙 SOL: $${solPrice} | BTC: $${btcPrice} | UWU: $0.000773 | VOL: $3201.67`;
+            messages[0] = `SOL: $${solPrice} | BTC: $${btcPrice} | $🧙: $${uwuPriceFormatted} | VOL: $3201.67`;
             
             // Refresh ticker content
             createTickerContent();
