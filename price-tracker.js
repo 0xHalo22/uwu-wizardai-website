@@ -1,9 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Messages configuration
+    // Constants
+    const TOKEN_CA = "FJXC6Y5HVkNQjHzRbUDiXMEmdXZe7mP7snS5yJmUpump";
+    const SOLANA_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+    
+    // Messages configuration with placeholder for prices
     const messages = [
-        "UWU TOKEN: $0.000",
+        "🪙 Loading prices...", // Will be updated with real data
         "✨ DO YOU BELIEVE IN MAGIC? ✨",
-        "24H VOLUME: $0.00",
+        "24H VOLUME: Loading...", // Will be updated with real data
         "🌟 THE WIZARDS ARE GATHERING 🌟",
         "✨ ENCHANTING THE DIGITAL REALM ✨",
         "🔮 MAGIC IS IN THE AIR 🔮",
@@ -18,41 +22,86 @@ document.addEventListener('DOMContentLoaded', () => {
         const tickerContent = document.querySelector('.ticker-content');
         if (!tickerContent) return;
         
-        // Clear existing content
         tickerContent.innerHTML = '';
         
-        // Add messages twice to ensure smooth infinite scroll
-        [...messages, ...messages].forEach(message => {
+        // Create three sets of messages for smooth infinite scroll
+        [...messages, ...messages, ...messages].forEach(message => {
             const span = document.createElement('span');
             span.textContent = message;
-            // Add magical glow effect
             span.style.textShadow = `0 0 10px rgba(137, 207, 240, ${Math.random() * 0.3 + 0.2})`;
             tickerContent.appendChild(span);
         });
+
+        // Calculate animation duration based on content width
+        const contentWidth = tickerContent.scrollWidth / 3; // Divide by 3 since we tripled the content
+        const duration = contentWidth / 50; // Adjust speed as needed
+
+        // Apply the animation
+        tickerContent.style.animation = `none`;
+        tickerContent.offsetHeight; // Trigger reflow
+        tickerContent.style.animation = `ticker ${duration}s linear infinite`;
     }
 
-    // Smooth animation reset
-    function resetAnimation() {
-        const ticker = document.querySelector('.ticker-content');
-        if (!ticker) return;
+    // Fetch price data from CoinGecko
+    async function fetchPrices() {
+        try {
+            const [solResponse, btcResponse] = await Promise.all([
+                fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'),
+                fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
+            ]);
 
-        ticker.style.animation = 'none';
-        ticker.offsetHeight; // Trigger reflow
-        ticker.style.animation = null;
-        startTickerAnimation();
+            const solData = await solResponse.json();
+            const btcData = await btcResponse.json();
+
+            return {
+                sol: solData.solana.usd.toFixed(2),
+                btc: btcData.bitcoin.usd.toFixed(0)
+            };
+        } catch (error) {
+            console.error('Error fetching CoinGecko prices:', error);
+            return null;
+        }
     }
 
-    // Start ticker animation with dynamic speed
-    function startTickerAnimation() {
-        const ticker = document.querySelector('.ticker-content');
-        if (!ticker) return;
+    // Fetch token data from Solana
+    async function fetchTokenData() {
+        try {
+            const connection = new solanaWeb3.Connection(SOLANA_ENDPOINT);
+            const tokenMint = new solanaWeb3.PublicKey(TOKEN_CA);
+            
+            // Get token supply and decimals
+            const tokenInfo = await connection.getTokenSupply(tokenMint);
+            
+            // You would need to implement specific logic here to get the actual price and volume
+            // This is a placeholder - replace with actual DEX query logic
+            const price = "0.000773"; // Placeholder
+            const volume = "3201.67"; // Placeholder
 
-        const totalWidth = ticker.scrollWidth;
-        const duration = totalWidth / 50; // Adjust speed based on content width
-        ticker.style.animation = `ticker ${duration}s linear infinite`;
+            return { price, volume };
+        } catch (error) {
+            console.error('Error fetching Solana token data:', error);
+            return null;
+        }
     }
 
-    // Pause ticker on hover
+    // Update ticker with new price data
+    async function updateTickerPrice() {
+        try {
+            const [prices, tokenData] = await Promise.all([
+                fetchPrices(),
+                fetchTokenData()
+            ]);
+
+            if (prices && tokenData) {
+                messages[0] = `🪙 SOL: $${prices.sol} | BTC: $${prices.btc} | UWU: $${tokenData.price} | VOL: $${tokenData.volume}`;
+                createTickerContent();
+            }
+        } catch (error) {
+            console.error('Error updating ticker:', error);
+        }
+    }
+
+    // Setup ticker interaction
     function setupTickerInteraction() {
         const ticker = document.querySelector('.ticker-wrap');
         if (!ticker) return;
@@ -74,107 +123,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Add magical sparkles to ticker
-    function addTickerSparkles() {
-        const ticker = document.querySelector('.ticker-wrap');
-        if (!ticker) return;
-
-        setInterval(() => {
-            if (isTickerPaused) return;
-
-            const sparkle = document.createElement('div');
-            sparkle.className = 'ticker-sparkle';
-            sparkle.innerHTML = '✨';
-            sparkle.style.left = `${Math.random() * 100}%`;
-            sparkle.style.animationDuration = `${Math.random() * 1 + 0.5}s`;
-            ticker.appendChild(sparkle);
-
-            // Remove sparkle after animation
-            setTimeout(() => sparkle.remove(), 1500);
-        }, 2000);
-    }
-
-    // Initialize Solana price tracking
-    async function initializePriceTracking() {
-        const SOLANA_ENDPOINT = 'https://api.mainnet-beta.solana.com';
-        
-        try {
-            console.log('Initializing price tracking...');
-            // Price fetching logic will be implemented here
-            // For now, we'll update the ticker with placeholder data
-            updateTickerPrice();
-        } catch (error) {
-            console.error('Error initializing price tracking:', error);
-        }
-    }
-
-    // Update ticker with new price data
-    function updateTickerPrice() {
-        // Placeholder for price updates
-        // Will be replaced with real data when available
-        messages[0] = `UWU TOKEN: $${(Math.random() * 0.001).toFixed(6)}`;
-        messages[2] = `24H VOLUME: $${(Math.random() * 10000).toFixed(2)}`;
-        createTickerContent();
-    }
-
-    // Add styles for ticker sparkles
-    function addTickerStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
-            .ticker-sparkle {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                font-size: 12px;
-                pointer-events: none;
-                animation: sparkleFloat ease-out forwards;
-                z-index: 11;
-            }
-
-            @keyframes sparkleFloat {
-                0% {
-                    opacity: 0;
-                    transform: translateY(0) scale(0);
-                }
-                50% {
-                    opacity: 1;
-                    transform: translateY(-10px) scale(1.2);
-                }
-                100% {
-                    opacity: 0;
-                    transform: translateY(-20px) scale(0);
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
     // Initialize everything
     function initialize() {
         createTickerContent();
         setupTickerInteraction();
-        addTickerStyles();
-        addTickerSparkles();
-        initializePriceTracking();
-
-        // Reset animation when it completes
-        const ticker = document.querySelector('.ticker-content');
-        if (ticker) {
-            ticker.addEventListener('animationend', resetAnimation);
-        }
-
-        // Update ticker content periodically
+        
+        // Initial price update
+        updateTickerPrice();
+        
+        // Update prices every 30 seconds
         tickerInterval = setInterval(() => {
             if (!isTickerPaused) {
                 updateTickerPrice();
             }
         }, 30000);
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            createTickerContent();
+        });
     }
 
     // Start initialization
     initialize();
 
-    // Cleanup on page unload
+    // Cleanup
     window.addEventListener('unload', () => {
         if (tickerInterval) {
             clearInterval(tickerInterval);
