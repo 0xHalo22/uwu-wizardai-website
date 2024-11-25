@@ -64,14 +64,14 @@ body {
 
 /* Tech Ecosystem Box - Added Styles for Glow and Blur */
 .tech-ecosystem-box {
-    background: rgba(255, 255, 255, 0.1); /* Light see-through effect */
+    background: rgba(255, 255, 255, 0.07); /* More transparent for frosty effect */
     border-radius: 20px;
     padding: 2rem;
-    backdrop-filter: blur(10px); /* Blurred background */
+    backdrop-filter: blur(15px); /* Increased blur for a frosty look */
     border: 2px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), 
-                0 0 60px rgba(255, 255, 255, 0.2), 
-                inset 0 0 20px rgba(255, 255, 255, 0.3); /* Glowy effect */
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.4), 
+                0 0 80px rgba(255, 255, 255, 0.2), 
+                inset 0 0 20px rgba(255, 255, 255, 0.3); /* Enhanced glow */
     text-align: center;
     color: #ffffff;
     z-index: 100;
