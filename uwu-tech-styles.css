@@ -123,6 +123,8 @@ body {
     align-items: center;
     gap: 2rem;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 100;
 }
 
 .bot-card:hover {
@@ -230,11 +232,5 @@ nav#menu ul li a:hover {
 }
 
 #emoji-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
+    z-index: 1; /* Lowered z-index */
 }
