@@ -96,12 +96,12 @@ body {
 }
 
 .tech-ecosystem-box::before {
-    left: -80px;
+    left: -60px;
     transform: translateY(-50%) rotate(-15deg);
 }
 
 .tech-ecosystem-box::after {
-    right: -80px;
+    right: -60px;
     transform: translateY(-50%) rotate(15deg);
 }
 
