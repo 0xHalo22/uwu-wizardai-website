@@ -2,10 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Price tracker initializing...');
     
     // Constants
-    const TOKEN_CA = "FJXC6Y5HVkNQjHzRbUDiXMEmdXZe7mP7snS5yJmUpump";
-    const SOLANA_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+    const TOKEN_CA = "FJXC6Y5HVkNQjHzRbUDiXMEmdXZe7mP7snS5yJmUpump";  // The UwU token address    const SOLANA_ENDPOINT = 'https://api.mainnet-beta.solana.com';
     const COINGECKO_API = 'https://api.coingecko.com/api/v3';
-    
+    const SOLANA_ENDPOINT = 'https://api.mainnet-beta.solana.com';
     // Ticker messages
     let messages = [
         "🪙 Loading prices...", 
