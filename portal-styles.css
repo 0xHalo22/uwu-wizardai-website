@@ -148,6 +148,9 @@ nav#menu {
   background: #000000 !important;
   z-index: 1001 !important;
 }
+body {
+  background: #000000;
+}
 
 @keyframes rotate {
   from { transform: rotate(0deg); }
