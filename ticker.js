@@ -9,10 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let isTickerPaused = false;
+    const TOKEN_CA = "FJXC6Y5HVkNQjHzRbUDiXMEmdXZe7mP7snS5yJmUpump";
 
     function createTickerContent() {
         const tickerContent = document.querySelector('.ticker-content');
-        if (!tickerContent) return;
+        if (!tickerContent) {
+            console.warn('Ticker content element not found');
+            return;
+        }
         
         tickerContent.innerHTML = '';
         
@@ -23,12 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
             tickerContent.appendChild(span);
         });
 
-        // Standardize animation speed
         const contentWidth = tickerContent.scrollWidth;
-        const baseSpeed = 100; // Adjust this value to fine-tune speed
+        const baseSpeed = 100;
         const duration = contentWidth / baseSpeed;
         
-        // Remove any existing animation
         tickerContent.style.animation = 'none';
         tickerContent.offsetHeight; // Trigger reflow
         tickerContent.style.animation = `ticker ${duration}s linear infinite`;
@@ -36,7 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setupTickerInteraction() {
         const ticker = document.querySelector('.ticker-wrap');
-        if (!ticker) return;
+        if (!ticker) {
+            console.warn('Ticker wrap element not found');
+            return;
+        }
 
         ticker.addEventListener('mouseenter', () => {
             const content = ticker.querySelector('.ticker-content');
@@ -57,28 +62,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function updatePriceData() {
         try {
-            // Fetch SOL price
-            const solResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
-            const solData = await solResponse.json();
-            const solPrice = solData.solana.usd.toFixed(2);
+            const [solResponse, btcResponse] = await Promise.all([
+                fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd'),
+                fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
+            ]);
 
-            // Fetch BTC price
-            const btcResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-            const btcData = await btcResponse.json();
+            const [solData, btcData] = await Promise.all([
+                solResponse.json(),
+                btcResponse.json()
+            ]);
+
+            const solPrice = solData.solana.usd.toFixed(2);
             const btcPrice = btcData.bitcoin.usd.toFixed(0);
 
-            // Update messages array
-            messages[0] = `🪙 SOL: $${solPrice} | BTC: $${btcPrice} | UWU: $0.000773 | VOL: $3201.67`;
+            messages[0] = `🪙 SOL: $${solPrice} | BTC: $${btcPrice} | $🧙: $0.000773 | VOL: $3201.67`;
             
-            // Refresh ticker content
-            createTickerContent();
+            if (!isTickerPaused) {
+                createTickerContent();
+            }
         } catch (error) {
             console.error('Error fetching price data:', error);
+            // On error, keep existing content
+            createTickerContent();
         }
     }
 
     function addTickerStyles() {
+        const existingStyle = document.getElementById('ticker-styles');
+        if (existingStyle) return;
+
         const style = document.createElement('style');
+        style.id = 'ticker-styles';
         style.textContent = `
             .ticker-wrap {
                 width: 100%;
@@ -116,32 +130,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             @keyframes ticker {
-                0% {
-                    transform: translateX(0);
-                }
-                100% {
-                    transform: translateX(-100%);
-                }
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-100%); }
             }
         `;
         document.head.appendChild(style);
     }
 
-    // Initialize everything
     function initialize() {
+        console.log('Initializing ticker...');
         addTickerStyles();
         createTickerContent();
         setupTickerInteraction();
-
-        // Update prices every 30 seconds
         updatePriceData();
         setInterval(updatePriceData, 30000);
 
-        // Handle window resize
         window.addEventListener('resize', () => {
-            createTickerContent();
+            if (!isTickerPaused) {
+                createTickerContent();
+            }
         });
     }
 
-    initialize();
+    // Ensure styles are added immediately
+    addTickerStyles();
+    
+    // Wait a brief moment for DOM to be fully ready
+    setTimeout(initialize, 100);
 });
