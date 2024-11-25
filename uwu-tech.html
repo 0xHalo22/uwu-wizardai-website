@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="uwu-tech-styles.css">
     <script src="https://unpkg.com/@solana/web3.js"></script>
     <script defer src="script.js"></script>
-    <script defer src="ticker.js"></script>
     <script defer src="uwu-tech-script.js"></script>
 </head>
 <body>
@@ -97,5 +96,8 @@
 
     <div id="emoji-container"></div>
     <div id="sparkle-container"></div>
+
+    <!-- Load ticker.js last to ensure it's loaded after other scripts -->
+    <script src="ticker.js"></script>
 </body>
 </html>
