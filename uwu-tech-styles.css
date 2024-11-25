@@ -1,191 +1,241 @@
-/* General styles for the UwU Tech page */
-
+/* Base Styles */
 body {
-    background: #000000;
-    font-family: 'VT323', monospace;
-    color: #ffffff;
+    overflow-y: auto !important;
+    min-height: 100vh;
+    padding-bottom: 60px;
     margin: 0;
+    background: linear-gradient(to bottom, #0a0a0f, #1a1a2e);
 }
 
-/* Hero Section */
-.section.hero-section {
-    text-align: center;
-    padding: 100px 20px;
-    background: #222;
-    color: #fff;
+/* Magic row styles */
+.magic-row {
+    padding-top: 60px;
+    margin-bottom: 2rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.magic-items {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 2rem;
+}
+
+.magic-emoji {
+    font-size: 3em;
+    animation: float 4s ease-in-out infinite;
+    opacity: 0.8;
+}
+
+.main-wizard-emoji {
+    font-size: 8em;
+    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.2));
+}
+
+/* Main content sections */
+.hero-section {
+    z-index: 96;
+    position: relative;
+    padding: 2rem;
+    margin-bottom: 3rem;
 }
 
 .hero-text h1 {
-    font-family: 'VT323', monospace;
-    font-size: 3em;
-    color: #89CFF0;
-    margin-bottom: 20px;
-    text-shadow: 0 0 10px rgba(137, 207, 240, 0.5);
+    font-size: 3.5em;
+    margin-bottom: 1rem;
+    color: #ffffff;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: #ffffff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 
+                 0 0 40px rgba(255, 255, 255, 0.4);
 }
 
 .hero-text p {
-    font-family: 'VT323', monospace;
-    font-size: 1.5em;
-    color: rgba(137, 207, 240, 0.8);
+    font-size: 1.2em;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
 }
 
-/* Bots Section */
-.section.bots-section {
+.bots-section {
+    padding: 0 2rem;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 50px 20px;
-    background: #111;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+    z-index: 98;
 }
 
 .bot-card {
-    background: rgba(34, 34, 34, 0.9);
-    padding: 20px;
-    margin: 15px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(137, 207, 240, 0.1);
-    max-width: 300px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(13, 13, 26, 0.7);
+    border-radius: 20px;
+    padding: 2rem;
+    backdrop-filter: blur(5px);
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 99;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.05),
+        0 0 40px rgba(255, 255, 255, 0.025),
+        inset 0 0 20px rgba(255, 255, 255, 0.025);
+    transform: translateY(0);
 }
 
 .bot-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 0 30px rgba(137, 207, 240, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 0 30px rgba(255, 255, 255, 0.1),
+        0 0 50px rgba(255, 255, 255, 0.05),
+        inset 0 0 30px rgba(255, 255, 255, 0.05);
+    background: rgba(13, 13, 26, 0.8);
 }
 
 .bot-icon {
-    font-size: 3em;
-    text-align: center;
-    color: #89CFF0;
-    margin-bottom: 10px;
+    font-size: 4em;
+    animation: float 4s ease-in-out infinite;
+}
+
+.bot-content {
+    flex: 1;
 }
 
 .bot-content h2 {
-    font-size: 1.8em;
-    color: #89CFF0;
-    text-shadow: 0 0 5px rgba(137, 207, 240, 0.3);
+    font-size: 2em;
+    margin-bottom: 1rem;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .bot-content p {
-    font-size: 1.2em;
-    color: rgba(137, 207, 240, 0.8);
+    font-size: 1.1em;
     line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
 }
 
 .bot-details {
-    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.bot-details span {
+    font-family: monospace;
+    color: #a0a0ff;
+    font-size: 1.1em;
 }
 
 .bot-link {
-    color: #89CFF0;
+    color: #fff;
     text-decoration: none;
-    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .bot-link:hover {
-    text-decoration: underline;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
-/* Magic Row Section */
-.section.magic-row {
-    text-align: center;
-    padding: 20px 0;
-    background: #111;
-}
-
-.magic-items {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.magic-emoji {
-    font-size: 2em;
-    margin: 0 10px;
-    animation: float 3s ease-in-out infinite alternate;
-}
-
-/* Magic Animation */
-@keyframes float {
-    0% {
-        transform: translateY(0);
-    }
-    100% {
-        transform: translateY(-10px);
-    }
-}
-
-/* Navigation Menu */
+/* Navigation */
 nav#menu {
-    background: #000000;
-    z-index: 1001;
-    position: sticky;
-    top: 0;
-    padding: 10px 0;
-    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    border-top: 1px solid rgba(137, 207, 240, 0.2);
+    z-index: 1999;
 }
 
 nav#menu ul {
-    list-style-type: none;
+    list-style: none;
     margin: 0;
     padding: 0;
-}
-
-nav#menu ul li {
-    display: inline;
-    margin: 0 15px;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
 }
 
 nav#menu ul li a {
-    color: #89CFF0;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 1.2em;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
 }
 
 nav#menu ul li a:hover {
-    text-decoration: underline;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
-/* Emojis and Sparkles Containers */
+/* Animations */
+@keyframes ticker {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(-5px);
+    }
+    50% {
+        transform: translateY(5px);
+    }
+}
+
+@keyframes contentGlow {
+    0%, 100% {
+        box-shadow: 
+            0 0 20px rgba(255, 255, 255, 0.05),
+            0 0 40px rgba(255, 255, 255, 0.025),
+            inset 0 0 20px rgba(255, 255, 255, 0.025);
+    }
+    50% {
+        box-shadow: 
+            0 0 30px rgba(255, 255, 255, 0.1),
+            0 0 50px rgba(255, 255, 255, 0.05),
+            inset 0 0 30px rgba(255, 255, 255, 0.05);
+    }
+}
+
 #emoji-container {
     position: fixed;
-    pointer-events: none;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
-}
-
-#sparkle-container {
-    position: fixed;
     pointer-events: none;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+    z-index: 90;
 }
 
-/* Coming Soon Bot */
-.bot-card.coming-soon {
-    background: rgba(68, 68, 68, 0.9);
-    color: #ccc;
-    text-align: center;
-}
-
-/* Removed Ticker Styles to Allow ticker.js to Control the Ticker */
-
-/* Footer Styles (if applicable) */
-footer {
-    text-align: center;
-    padding: 20px;
-    background: #222;
-    color: rgba(137, 207, 240, 0.8);
-    font-size: 0.9em;
-}
-
-/* Misc */
-.hidden {
-    display: none !important;
+/* Fix for the backdrop-filter support */
+@supports not (backdrop-filter: blur(10px)) {
+    .bot-card,
+    nav#menu {
+        background: rgba(0, 0, 0, 0.9);
+    }
 }
