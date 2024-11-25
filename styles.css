@@ -15,9 +15,10 @@ body {
 nav#menu {
     position: fixed;
     bottom: 0;
+    left: 0;
     width: 100%;
     text-align: center;
-    z-index: 10;
+    z-index: 1000;
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
     padding: 1rem 0;
@@ -83,7 +84,7 @@ main#content p {
     font-family: 'VT323', monospace;
     font-size: 1.5em;
     line-height: 1.6;
-    color: rgba(137, 207, 240, 0.9);
+    color: #FFFFFF;
     text-shadow: 0 0 10px rgba(137, 207, 240, 0.2);
     max-width: 600px;
     margin: 0 auto;

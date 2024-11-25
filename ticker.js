@@ -1,9 +1,7 @@
-// Create a new file called 'ticker.js' in your project root
 document.addEventListener('DOMContentLoaded', () => {
-    const messages = [
-        "UWU TOKEN: $0.000",
+    let messages = [
+        "🪙 SOL: $0.00 | BTC: $0.00 | UWU: $0.000773 | VOL: $3201.67",
         "✨ DO YOU BELIEVE IN MAGIC? ✨",
-        "24H VOLUME: $0.00",
         "🌟 THE WIZARDS ARE GATHERING 🌟",
         "✨ ENCHANTING THE DIGITAL REALM ✨",
         "🔮 MAGIC IS IN THE AIR 🔮",
@@ -18,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         tickerContent.innerHTML = '';
         
-        // Add messages twice to ensure smooth infinite scroll
         [...messages, ...messages].forEach(message => {
             const span = document.createElement('span');
             span.textContent = message;
@@ -26,9 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
             tickerContent.appendChild(span);
         });
 
-        // Calculate appropriate animation duration based on content
+        // Standardize animation speed
         const contentWidth = tickerContent.scrollWidth;
-        const duration = contentWidth / 50; // Standardized speed ratio
+        const baseSpeed = 100; // Adjust this value to fine-tune speed
+        const duration = contentWidth / baseSpeed;
+        
+        // Remove any existing animation
+        tickerContent.style.animation = 'none';
+        tickerContent.offsetHeight; // Trigger reflow
         tickerContent.style.animation = `ticker ${duration}s linear infinite`;
     }
 
@@ -51,6 +53,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 content.style.animationPlayState = 'running';
             }
         });
+    }
+
+    async function updatePriceData() {
+        try {
+            // Fetch SOL price
+            const solResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+            const solData = await solResponse.json();
+            const solPrice = solData.solana.usd.toFixed(2);
+
+            // Fetch BTC price
+            const btcResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+            const btcData = await btcResponse.json();
+            const btcPrice = btcData.bitcoin.usd.toFixed(0);
+
+            // Update messages array
+            messages[0] = `🪙 SOL: $${solPrice} | BTC: $${btcPrice} | UWU: $0.000773 | VOL: $3201.67`;
+            
+            // Refresh ticker content
+            createTickerContent();
+        } catch (error) {
+            console.error('Error fetching price data:', error);
+        }
     }
 
     function addTickerStyles() {
@@ -109,9 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
         createTickerContent();
         setupTickerInteraction();
 
+        // Update prices every 30 seconds
+        updatePriceData();
+        setInterval(updatePriceData, 30000);
+
         // Handle window resize
         window.addEventListener('resize', () => {
-            createTickerContent(); // Recalculate duration based on new width
+            createTickerContent();
         });
     }
 
