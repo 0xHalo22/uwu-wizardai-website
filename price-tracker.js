@@ -2,9 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Price tracker initializing...');
     
     // Constants
-    const TOKEN_CA = "FJXC6Y5HVkNQjHzRbUDiXMEmdXZe7mP7snS5yJmUpump";  // The UwU token address    const SOLANA_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+    const TOKEN_CA = "FJXC6Y5HVkNQjHzRbUDiXMEmdXZe7mP7snS5yJmUpump";  // The UwU token address
     const COINGECKO_API = 'https://api.coingecko.com/api/v3';
-    const SOLANA_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+    const DEXSCREENER_API = `https://api.dexscreener.io/latest/dex/tokens/${TOKEN_CA}`;
+    
     // Ticker messages
     let messages = [
         "🪙 Loading prices...", 
@@ -78,28 +79,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Fetch token data from Solana
+    // Fetch token data from DexScreener
     async function fetchTokenData() {
         try {
-            console.log('Fetching Solana token data...');
-            const connection = new solanaWeb3.Connection(SOLANA_ENDPOINT);
-            console.log('Solana connection established');
-            
-            const tokenMint = new solanaWeb3.PublicKey(TOKEN_CA);
-            console.log('Token mint created:', TOKEN_CA);
-            
-            // Get token supply and decimals
-            const tokenInfo = await connection.getTokenSupply(tokenMint);
-            console.log('Token info retrieved:', tokenInfo);
-            
-            // You would implement your specific DEX query logic here
-            // This is a placeholder implementation
-            const price = "0.000773";
-            const volume = "3201.67";
-            
+            console.log('Fetching DexScreener token data...');
+            const response = await fetch(DEXSCREENER_API);
+
+            if (!response.ok) {
+                throw new Error('DexScreener API response not ok');
+            }
+
+            const data = await response.json();
+
+            // Extract price and volume from response
+            const price = data.pairs[0]?.priceUsd || "0.000000"; // Fallback if no price is found
+            const volume = data.pairs[0]?.volume?.h24 || "0.00";  // Fallback if no volume is found
+
+            console.log('Token data retrieved:', { price, volume });
             return { price, volume };
         } catch (error) {
-            console.error('Error fetching Solana token data:', error);
+            console.error('Error fetching DexScreener token data:', error);
             return {
                 price: '0.000000',
                 volume: '0.00'
