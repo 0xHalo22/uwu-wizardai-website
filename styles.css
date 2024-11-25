@@ -124,16 +124,6 @@ main#content p {
     animation: burst 0.8s ease-out forwards;
 }
 
-.content-blur {
-    position: fixed;
-    top: 40px;
-    bottom: 60px;
-    left: 0;
-    right: 0;
-    backdrop-filter: blur(10px);
-    pointer-events: none;
-    z-index: 999;
-}
 
 .ticker-wrap {
     width: 100%;

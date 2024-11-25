@@ -1,9 +1,9 @@
 #portal-container {
   position: fixed;
-  top: 0;
+  top: 40;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 100px);
   background: linear-gradient(to bottom, #000000, #0a0a1f);
   overflow: hidden;
 }
@@ -18,10 +18,10 @@
 
 .overlay {
   position: fixed;
-  top: 0;
+  top: 40;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 100px);
   display: flex;
   justify-content: center;
   align-items: center;
