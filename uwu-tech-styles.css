@@ -45,10 +45,11 @@ body {
     max-width: 1600px;
     margin: 0 auto;
     margin-bottom: 3rem;
-    width: 100vw;
+    width: 98vw;
 }
 
 .hero-text h1 {
+    width: 100%;
     font-size: 3.5em;
     margin-bottom: 1rem;
     color: #ffffff;
