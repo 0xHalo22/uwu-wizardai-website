@@ -64,20 +64,18 @@ body {
     color: rgba(255, 255, 255, 0.9);
 }
 
-/* Tech Ecosystem Box - Added Styles for Glow and Blur */
-.tech-ecosystem-box {
-    background: rgba(255, 255, 255, 0.07); /* More transparent for frosty effect */
+/* Tech Ecosystem Box - Updated for Consistent Sizing */
+.hero-content.tech-ecosystem-box {
+    max-width: 1000px; /* Adjusted to match bot card width */
+    margin: 0 auto;
+    padding: 2rem; /* Add padding for spacing similar to bot cards */
+    backdrop-filter: blur(5px);
+    background: rgba(255, 255, 255, 0.1); /* Frosted glass effect */
     border-radius: 20px;
-    padding: 2rem;
-    backdrop-filter: blur(7px); /* Increased blur for a frosty look */
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 40px rgba(255, 255, 255, 0.4), 
-                0 0 80px rgba(255, 255, 255, 0.2), 
-                inset 0 0 20px rgba(255, 255, 255, 0.3); /* Enhanced glow */
-    text-align: center;
-    color: #ffffff;
-    z-index: 95;
-    transition: all 0.3s ease;
+    box-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.05),
+        0 0 40px rgba(255, 255, 255, 0.025),
+        inset 0 0 20px rgba(255, 255, 255, 0.025);
 }
 
 /* Bots Section */
