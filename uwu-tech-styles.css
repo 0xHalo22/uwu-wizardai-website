@@ -174,8 +174,7 @@ nav#menu ul li a:hover {
     text-align: center;
 }
 
-/* Removed Ticker Styles Here */
-/* Let ticker.js handle all ticker styling */
+/* Removed Ticker Styles to Allow ticker.js to Control the Ticker */
 
 /* Footer Styles (if applicable) */
 footer {
