@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   height: calc(100vh - 100px);
-  background: linear-gradient(to bottom, #000000, #0a0a1f);
+  background: #000000;
   overflow: hidden;
 }
 
@@ -145,7 +145,7 @@
 }
 
 nav#menu {
-  background: rgba(0, 0, 0, 0.95) !important;
+  background: #000000 !important;
   z-index: 1001 !important;
 }
 
