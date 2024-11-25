@@ -51,6 +51,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    z-index: 95;
 }
 
 .magic-items {
@@ -84,11 +86,12 @@ body {
 .hero-text h1 {
     font-size: 3.5em;
     margin-bottom: 1rem;
-    color: #ffffff; /* Changed to white */
+    color: #ffffff;
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: #ffffff; /* Ensure text is filled with white */
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.4); /* Keep glowing pulse effect */
+    -webkit-text-fill-color: #ffffff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.4);
+    animation: titleGlow 4s ease-in-out infinite;
 }
 
 .hero-text p {
@@ -107,8 +110,9 @@ body {
     z-index: 98;
 }
 
+/* Enhanced Bot Cards with Portal-like styling */
 .bot-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(13, 13, 26, 0.7);
     border-radius: 20px;
     padding: 2rem;
     backdrop-filter: blur(5px);
@@ -120,16 +124,28 @@ body {
     transition: all 0.3s ease;
     position: relative;
     z-index: 99;
+    border: 2px solid rgba(137, 207, 240, 0.2);
+    box-shadow: 
+        0 0 20px rgba(137, 207, 240, 0.1),
+        0 0 40px rgba(137, 207, 240, 0.05),
+        inset 0 0 20px rgba(137, 207, 240, 0.05);
+    animation: contentGlow 4s ease-in-out infinite;
 }
 
 .bot-card:hover {
-    transform: translateX(10px);
-    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-5px);
+    border-color: rgba(137, 207, 240, 0.4);
+    box-shadow: 
+        0 0 30px rgba(137, 207, 240, 0.15),
+        0 0 50px rgba(137, 207, 240, 0.1),
+        inset 0 0 30px rgba(137, 207, 240, 0.1);
+    background: rgba(13, 13, 26, 0.8);
 }
 
 .bot-icon {
     font-size: 4em;
     animation: float 4s ease-in-out infinite;
+    text-shadow: 0 0 20px rgba(137, 207, 240, 0.5);
 }
 
 .bot-content {
@@ -139,7 +155,12 @@ body {
 .bot-content h2 {
     font-size: 2em;
     margin-bottom: 1rem;
-    color: #fff;
+    color: #89CFF0;
+    text-shadow: 
+        0 0 10px rgba(137, 207, 240, 0.5),
+        0 0 20px rgba(137, 207, 240, 0.3),
+        0 0 30px rgba(137, 207, 240, 0.2);
+    animation: titlePulse 4s ease-in-out infinite;
 }
 
 .bot-content p {
@@ -147,6 +168,7 @@ body {
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(137, 207, 240, 0.2);
 }
 
 .bot-details {
@@ -156,23 +178,30 @@ body {
 }
 
 .bot-details span {
-    font-family: monospace;
-    color: #a0a0ff;
-    font-size: 1.1em;
+    font-family: 'VT323', monospace;
+    color: #89CFF0;
+    font-size: 1.2em;
+    text-shadow: 0 0 10px rgba(137, 207, 240, 0.3);
 }
 
 .bot-link {
     color: #fff;
     text-decoration: none;
     padding: 0.5rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(137, 207, 240, 0.3);
     border-radius: 20px;
     transition: all 0.3s ease;
+    background: rgba(137, 207, 240, 0.1);
+    box-shadow: 0 0 15px rgba(137, 207, 240, 0.1);
+    font-family: 'VT323', monospace;
+    font-size: 1.1em;
 }
 
 .bot-link:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(137, 207, 240, 0.2);
+    border-color: rgba(137, 207, 240, 0.5);
+    box-shadow: 0 0 20px rgba(137, 207, 240, 0.2);
+    transform: translateY(-2px);
 }
 
 /* Navigation */
@@ -208,21 +237,60 @@ nav#menu ul li a:hover {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
+/* Animation Keyframes */
 @keyframes ticker {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
 }
 
 @keyframes float {
+    0%, 100% { transform: translateY(-5px); }
+    50% { transform: translateY(5px); }
+}
+
+@keyframes contentGlow {
     0%, 100% {
-        transform: translateY(-5px);
+        box-shadow: 
+            0 0 20px rgba(137, 207, 240, 0.1),
+            0 0 40px rgba(137, 207, 240, 0.05),
+            inset 0 0 20px rgba(137, 207, 240, 0.05);
     }
     50% {
-        transform: translateY(5px);
+        box-shadow: 
+            0 0 30px rgba(137, 207, 240, 0.2),
+            0 0 50px rgba(137, 207, 240, 0.1),
+            inset 0 0 30px rgba(137, 207, 240, 0.1);
+    }
+}
+
+@keyframes titlePulse {
+    0%, 100% {
+        text-shadow: 
+            0 0 10px rgba(137, 207, 240, 0.5),
+            0 0 20px rgba(137, 207, 240, 0.3),
+            0 0 30px rgba(137, 207, 240, 0.2);
+    }
+    50% {
+        text-shadow: 
+            0 0 20px rgba(137, 207, 240, 0.7),
+            0 0 30px rgba(137, 207, 240, 0.5),
+            0 0 40px rgba(137, 207, 240, 0.3);
+    }
+}
+
+@keyframes titleGlow {
+    0%, 100% {
+        text-shadow: 
+            0 0 20px rgba(255, 255, 255, 0.3),
+            0 0 40px rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.95);
+    }
+    50% {
+        text-shadow: 
+            0 0 30px rgba(255, 255, 255, 0.5),
+            0 0 60px rgba(255, 255, 255, 0.3),
+            0 0 80px rgba(255, 255, 255, 0.2);
+        color: #ffffff;
     }
 }
 
@@ -234,12 +302,4 @@ nav#menu ul li a:hover {
     height: 100%;
     pointer-events: none;
     z-index: 90;
-}
-
-/* Fix for the backdrop-filter support */
-@supports not (backdrop-filter: blur(10px)) {
-    .bot-card,
-    nav#menu {
-        background: rgba(0, 0, 0, 0.9);
-    }
 }
