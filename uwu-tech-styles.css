@@ -50,6 +50,7 @@ body {
 
 .hero-text h1 {
     width: 100%;
+    max-width: 100%;
     font-size: 3.5em;
     margin-bottom: 1rem;
     color: #ffffff;
