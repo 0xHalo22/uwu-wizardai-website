@@ -62,6 +62,23 @@ body {
     color: rgba(255, 255, 255, 0.9);
 }
 
+/* Tech Ecosystem Box - Added Styles for Glow and Blur */
+.tech-ecosystem-box {
+    background: rgba(255, 255, 255, 0.1); /* Light see-through effect */
+    border-radius: 20px;
+    padding: 2rem;
+    backdrop-filter: blur(10px); /* Blurred background */
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), 
+                0 0 60px rgba(255, 255, 255, 0.2), 
+                inset 0 0 20px rgba(255, 255, 255, 0.3); /* Glowy effect */
+    text-align: center;
+    color: #ffffff;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+/* Bots Section */
 .bots-section {
     padding: 0 2rem;
     display: flex;
