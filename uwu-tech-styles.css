@@ -39,7 +39,7 @@ body {
 
 /* Main content sections */
 .hero-section {
-    z-index: 101;
+    z-index: 97;
     position: relative;
     padding: 2rem;
     margin-bottom: 3rem;
