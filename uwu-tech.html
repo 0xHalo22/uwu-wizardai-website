@@ -3,99 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UwU Tech - Magical Solutions</title>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <title>UwU Tech Page</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="uwu-tech-styles.css">
-    <script src="https://unpkg.com/@solana/web3.js"></script>
-    <script defer src="script.js"></script>
-    <script defer src="ticker.js"></script>
-    <script defer src="uwu-tech-script.js"></script>
+    <!-- <link rel="stylesheet" href="uwu-tech-styles.css"> -->
 </head>
 <body>
     <div class="ticker-wrap">
         <div class="ticker">
-            <div class="ticker-content">
-                <!-- Content will be dynamically inserted by JavaScript -->
-            </div>
+            <div class="ticker-content"></div>
         </div>
     </div>
-
-    <div class="section magic-row">
-        <div class="magic-items">
-            <span class="magic-emoji">🌟</span>
-            <span class="magic-emoji">✨</span>
-            <span class="magic-emoji">🔮</span>
-            <span class="main-wizard-emoji">🧙‍♂️</span>
-            <span class="magic-emoji">💫</span>
-            <span class="magic-emoji">⭐</span>
-            <span class="magic-emoji">✨</span>
-        </div>
-    </div>
-
-    <div class="section hero-section">
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1>UwU Tech Ecosystem</h1>
-                <p>Enchanting the digital realm with magical AI solutions. Our wizards
-                craft intelligent companions that bring wonder and efficiency to your
-                everyday interactions.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="section bots-section">
-        <div class="bot-card">
-            <div class="bot-icon">🤖✨</div>
-            <div class="bot-content">
+    <main>
+        <h1>UwU Tech Ecosystem</h1>
+        <section class="bot-cards">
+            <div class="bot-card" data-speed="0.2">
                 <h2>UwU - AI Chat Bot</h2>
-                <p>Your magical AI companion, bringing intelligence and charm to every
-                conversation. Whether it's playful banter or profound insight, UwU AI
-                Chat Bot adds a spark of wonder that keeps communities engaged,
-                enchanted, and connected.</p>
-                <div class="bot-details">
-                    <span>@UwUAIChatBot</span>
-                    <a href="https://t.me/UwUAIChatBot" class="bot-link" target="_blank">Connect on Telegram</a>
-                </div>
+                <p>Your magical AI companion, bringing intelligence and charm to every conversation.</p>
             </div>
-        </div>
-
-        <div class="bot-card">
-            <div class="bot-icon">📢✨</div>
-            <div class="bot-content">
-                <h2>UwU - Hey All Bot</h2>
-                <p>Broadcasting magic across your community with style and efficiency. Hey
-                All Bot makes sure every important moment is heard by all, uniting your
-                community under the spell of effortless coordination and excitement.</p>
-                <div class="bot-details">
-                    <span>@UwUHeyAllBot</span>
-                    <a href="https://t.me/UwUHeyAllBot" class="bot-link" target="_blank">Connect on Telegram</a>
-                </div>
+            <div class="bot-card" data-speed="0.2">
+                <h2>UwU - Hey AI Bot</h2>
+                <p>Broadcasting magic across your community with style and efficiency.</p>
             </div>
-        </div>
-
-        <div class="bot-card coming-soon">
-            <div class="bot-icon">✨🔮🛠️</div>
-            <div class="bot-content">
-                <h2>Coming Soon...</h2>
-                <p>New magic is brewing in the wizard's cauldron. Stay tuned as we conjure
-                new companions to enhance your community and transform engagement to the
-                next level. The future of community magic is almost here...</p>
-            </div>
-        </div>
-    </div>
-
-    <nav id="menu">
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="#" class="active">UwU Tech</a></li>
-            <li><a href="portal.html">Portal</a></li>
-            <li><a href="https://x.com/uwuwizardai" target="_blank">Twitter</a></li>
-            <li><a href="https://t.me/uwuwizardportal" target="_blank">Telegram</a></li>
-        </ul>
-    </nav>
-
-    <div id="emoji-container"></div>
-    <div id="sparkle-container"></div>
+        </section>
+    </main>
+    <script src="ticker.js"></script>
+    <!-- <script src="uwu-tech-script.js"></script> -->
 </body>
 </html>
