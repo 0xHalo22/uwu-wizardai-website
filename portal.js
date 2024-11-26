@@ -35,23 +35,24 @@ void main() {
     // Enhanced pulsing effect
     float pulse = sin(time * 2.0) * 0.5 + 0.5;
     pulse = pulse * pulseIntensity;
-    
-    // Stronger edge glow effect
-    float fresnel = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 5.0); // Increased power for sharper edges
-    vec3 glowColor = vec3(0.5, 0.8, 1.0) * fresnel * glowIntensity * 1.5; // Increased intensity
-    
+
+    // Stronger and more responsive edge glow effect
+    float fresnel = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 8.0); // Increased power for sharper glow
+    vec3 glowColor = vec3(0.6, 0.9, 1.2) * fresnel * glowIntensity * 1.8; // Adjusted for even stronger edges
+
     // More prominent energy flow effect
-    float energy = sin(vUv.y * 20.0 + time * 3.0) * 0.5 + 0.5;
-    energy *= sin(vUv.x * 15.0 - time * 2.0) * 0.5 + 0.5;
-    
-    // Combine effects with stronger glow
-    vec3 finalColor = baseColor + (glowColor * pulse * 1.2) + (vec3(0.3, 0.6, 1.0) * energy * 0.4);
-    
-    // Adjusted transparency for more crystal-like appearance
-    float alpha = 0.5 + fresnel * 0.5;
-    
+    float energy = sin(vUv.y * 25.0 + time * 4.0) * 0.5 + 0.5;
+    energy *= sin(vUv.x * 18.0 - time * 3.0) * 0.5 + 0.5;
+
+    // Combine effects with stronger glow and more emphasis on fresnel and energy flow
+    vec3 finalColor = baseColor + (glowColor * pulse * 1.5) + (vec3(0.4, 0.7, 1.1) * energy * 0.5);
+
+    // Adjusted transparency for a more crystal-like shimmer
+    float alpha = 0.6 + fresnel * 0.4;
+
     gl_FragColor = vec4(finalColor, alpha);
 }`;
+
 
 function init() {
     console.log('Initializing portal...');
