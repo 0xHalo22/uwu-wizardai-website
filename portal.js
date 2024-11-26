@@ -176,15 +176,17 @@ function setupFloatingIslands() {
                     Math.random() * 0.1 + 0.8,
                     1.0
                 )},
-                pulseIntensity: { value: Math.random() * 0.3 + 0.7 },
-                glowIntensity: { value: Math.random() * 0.7 + 0.8 }
+                pulseIntensity: { value: Math.random() * 0.5 + 0.5 }, // Adjusted for stronger pulse
+                glowIntensity: { value: Math.random() * 0.8 + 1.2 } // Increased glow
             },
             vertexShader: crystalVertexShader,
             fragmentShader: crystalFragmentShader,
             transparent: true,
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            blending: THREE.AdditiveBlending // Adds a glowing effect to make the crystals shimmer
         });
     });
+    
 
     for(let i = 0; i < 12; i++) {
         const crystalGroup = new THREE.Group();
