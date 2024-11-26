@@ -5,7 +5,7 @@ let particles = [], islands = [], sparkles = [];
 let isControlsEnabled = false;
 let magicTrail;
 
-// Crystal Shader Definitions
+// Crystal Shader Definitions + poptart
 const crystalVertexShader = `
 varying vec3 vNormal;
 varying vec3 vPosition;
