@@ -4,16 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UwU Portal - Magical Realm</title>
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="portal-styles.css">
-    <!-- Three.js Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r159/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/curves/CatmullRomCurve3.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/controls/PointerLockControls.js"></script>
-    <!-- Your Scripts -->
+    <script src="https://unpkg.com/@solana/web3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.159.0/three.min.js"></script>
     <script defer src="portal.js"></script>
     <script defer src="ticker.js"></script>
 </head>
@@ -23,6 +18,7 @@
             <div class="ticker-content"></div>
         </div>
     </div>
+
     <div id="portal-container">
         <canvas id="portal-canvas"></canvas>
         <div id="loading-screen">
