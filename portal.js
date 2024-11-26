@@ -31,28 +31,28 @@ varying vec2 vUv;
 void main() {
     // Base crystal color with transparency
     vec3 baseColor = color;
-    
+
     // Enhanced pulsing effect for brighter intensity
     float pulse = sin(time * 2.0) * 0.5 + 0.5;
-    pulse = pulse * pulseIntensity * 1.5; // Increased pulse for more brightness
+    pulse = pulse * pulseIntensity * 2.0; // Further increased pulse for brightness
 
     // Combination fresnel: Stronger glow at the edges but also including soft glow
-    float fresnelEdge = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 8.0); // Sharper edges with increased power
-    float fresnelSoft = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 3.0); // Softer glow for more coverage
-    
+    float fresnelEdge = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 6.0); // Keep edges sharper
+    float fresnelSoft = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 2.5); // Increased coverage for soft glow
+
     // Glow color for edges and soft glow combined for a bright appearance
-    vec3 edgeGlowColor = vec3(0.6, 0.9, 1.2) * fresnelEdge * glowIntensity * 1.5; // Edge glow with stronger intensity
-    vec3 softGlowColor = vec3(0.4, 0.7, 1.0) * fresnelSoft * glowIntensity * 0.8; // Soft glow for overall shimmer
-    
+    vec3 edgeGlowColor = vec3(0.7, 1.0, 1.3) * fresnelEdge * glowIntensity * 2.0; // Stronger edge glow
+    vec3 softGlowColor = vec3(0.5, 0.8, 1.1) * fresnelSoft * glowIntensity * 1.5; // Boosted soft glow intensity
+
     // More prominent energy flow effect to add liveliness
     float energy = sin(vUv.y * 25.0 + time * 4.0) * 0.5 + 0.5;
     energy *= sin(vUv.x * 18.0 - time * 3.0) * 0.5 + 0.5;
 
     // Combine effects with stronger glow, fresnel edges, and energy flow
-    vec3 finalColor = baseColor + (edgeGlowColor * pulse * 1.2) + softGlowColor + (vec3(0.4, 0.7, 1.1) * energy * 0.4);
+    vec3 finalColor = baseColor + (edgeGlowColor * pulse * 1.5) + softGlowColor + (vec3(0.5, 0.8, 1.2) * energy * 0.5);
 
     // Adjusted transparency for a shimmering crystal effect
-    float alpha = 0.5 + fresnelEdge * 0.3 + fresnelSoft * 0.1;
+    float alpha = 0.6 + fresnelEdge * 0.4 + fresnelSoft * 0.2;
 
     gl_FragColor = vec4(finalColor, alpha);
 }`;
@@ -179,11 +179,11 @@ function setupFloatingIslands() {
                 time: { value: 0 },
                 color: { value: new THREE.Color(
                     Math.random() * 0.1 + 0.4,
-                    Math.random() * 0.1 + 0.8,
+                    Math.random() * 0.1 + 0.9,  // Slight boost to green hue
                     1.0
                 )},
-                pulseIntensity: { value: Math.random() * 0.3 + 1.0 }, // Adjusted for more intense pulse
-                glowIntensity: { value: Math.random() * 0.7 + 1.2 } // Increased glow for more brightness
+                pulseIntensity: { value: Math.random() * 0.4 + 1.6 }, // Increased pulse for more brightness
+                glowIntensity: { value: Math.random() * 0.7 + 1.8 } // Increased glow for brighter effect
             },
             vertexShader: crystalVertexShader,
             fragmentShader: crystalFragmentShader,
@@ -191,7 +191,7 @@ function setupFloatingIslands() {
             side: THREE.DoubleSide,
             blending: THREE.AdditiveBlending // Adds a glowing effect to make the crystals shimmer
         });
-    });
+    });    
 
     for (let i = 0; i < 12; i++) {
         const crystalGroup = new THREE.Group();
@@ -394,11 +394,13 @@ function setupLighting() {
     const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
     scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1.5);
+    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1.8);
     mainLight.position.set(10, 10, 10);
     scene.add(mainLight);
 
     const colors = [0x3366ff, 0x00aaff, 0x4422ff];
+    const pointLights = [];
+
     colors.forEach((color, index) => {
         const light = new THREE.PointLight(color, 1.5, 70);
         light.position.set(
@@ -406,8 +408,27 @@ function setupLighting() {
             Math.sin(index * Math.PI * 2 / 3) * 40,
             0
         );
+        pointLights.push(light);
         scene.add(light);
     });
+
+    // Add pulsing effect to lights
+    setInterval(() => {
+        const pulseValue = Math.sin(Date.now() * 0.003) * 0.3;
+        mainLight.intensity = 1.6 + pulseValue;
+    
+        // Slight color shift with pulse
+        mainLight.color.setHSL(0.6 + pulseValue * 0.1, 1, 0.6);
+    
+        pointLights.forEach((light, i) => {
+            const pointPulse = Math.sin(Date.now() * 0.003 + i) * 0.2;
+            light.intensity = 1.4 + pointPulse;
+    
+            // Slight color shift for variety
+            light.color.setHSL(0.5 + pointPulse * 0.1, 1, 0.5);
+        });
+    }, 50);
+    
 }
 
 function setupControls() {
