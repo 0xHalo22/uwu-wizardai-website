@@ -157,6 +157,7 @@ function setupFloatingIslands() {
     const runeTextures = [
         '✧', '⚝', '✦', '⚘', '❈', '✴', '❋', '✺'
     ].map(createRuneTexture);
+
     const crystalGeometries = [
         new THREE.IcosahedronGeometry(4, 0),
         new THREE.OctahedronGeometry(5, 0),
@@ -188,14 +189,12 @@ function setupFloatingIslands() {
     for(let i = 0; i < 12; i++) {
         const crystalGroup = new THREE.Group();
         
-        // Create main crystal
         const geometryIndex = Math.floor(Math.random() * crystalGeometries.length);
         const crystal = new THREE.Mesh(
             crystalGeometries[geometryIndex],
             crystalMaterials[geometryIndex].clone()
         );
         
-        // Position the crystal group
         const radius = 30 + Math.random() * 40;
         const theta = (i / 12) * Math.PI * 2;
         crystalGroup.position.set(
@@ -204,20 +203,16 @@ function setupFloatingIslands() {
             Math.sin(theta) * radius
         );
         
-        // Add the main crystal to the group
         crystalGroup.add(crystal);
         
-        // Add orbital runes
         const runeCount = Math.floor(Math.random() * 3) + 2;
         for(let j = 0; j < runeCount; j++) {
             const rune = createOrbitalRune(runeGeometry, runeTextures);
             crystalGroup.add(rune);
         }
         
-        // Add energy streams
         addEnergyStreams(crystalGroup);
         
-        // Store animation parameters
         crystalGroup.userData = {
             rotationSpeed: (Math.random() - 0.5) * 0.002,
             floatSpeed: 0.001 + Math.random() * 0.002,
@@ -231,122 +226,34 @@ function setupFloatingIslands() {
     }
 }
 
-// In setupFloatingIslands()
-const crystalGeometries = [
-    new THREE.IcosahedronGeometry(4, 0), // Reduced from 2 to 0 for sharper edges
-    new THREE.OctahedronGeometry(5, 0),  // Reduced subdivisions
-    new THREE.TetrahedronGeometry(6, 0), // Kept at 0 for sharpest form
-    createCustomCrystal(4, 12, 4),  // Made taller
-    createCustomCrystal(3, 9, 3),   // Made taller
-    createCustomCrystal(5, 15, 5)   // Made taller and more complex
-];
-
-// Adjust material transparency
-const crystalMaterials = crystalGeometries.map(() => {
-    return new THREE.ShaderMaterial({
-        uniforms: {
-            time: { value: 0 },
-            color: { value: new THREE.Color(
-                Math.random() * 0.1 + 0.4,  // Less red
-                Math.random() * 0.1 + 0.8,  // More blue
-                1.0
-            )},
-            pulseIntensity: { value: Math.random() * 0.3 + 0.7 },
-            glowIntensity: { value: Math.random() * 0.7 + 0.8 }  // Increased glow
-        },
-        vertexShader: crystalVertexShader,
-        fragmentShader: crystalFragmentShader,
-        transparent: true,
-        side: THREE.DoubleSide
-    });
-});
-
-    // Helper function to create custom crystal geometry
-    function createCustomCrystal(radius, height, segments) {
-        const geometry = new THREE.BufferGeometry();
-        const vertices = [];
-        const indices = [];
-        
-        // Create top point
-        vertices.push(0, height/2, 0);
-        
-        // Create bottom point
-        vertices.push(0, -height/2, 0);
-        
-        // Create middle ring of points
-        for(let i = 0; i < segments; i++) {
-            const angle = (i / segments) * Math.PI * 2;
-            vertices.push(
-                Math.cos(angle) * radius,
-                0,
-                Math.sin(angle) * radius
-            );
-        }
-        
-        // Create faces
-        for(let i = 0; i < segments; i++) {
-            // Top faces
-            indices.push(0, 2 + i, 2 + ((i + 1) % segments));
-            // Bottom faces
-            indices.push(1, 2 + ((i + 1) % segments), 2 + i);
-        }
-        
-        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geometry.setIndex(indices);
-        geometry.computeVertexNormals();
-        
-        return geometry;
-    }
-
-    const runeGeometry = new THREE.PlaneGeometry(1, 1);
-    const runeTextures = [
-        '✧', '⚝', '✦', '⚘', '❈', '✴', '❋', '✺'
-    ].map(createRuneTexture);
-
-    for(let i = 0; i < 12; i++) {
-        const crystalGroup = new THREE.Group();
-        
-        // Create main crystal
-        const geometryIndex = Math.floor(Math.random() * crystalGeometries.length);
-        const crystal = new THREE.Mesh(
-            crystalGeometries[geometryIndex],
-            crystalMaterials[geometryIndex].clone()
+function createCustomCrystal(radius, height, segments) {
+    const geometry = new THREE.BufferGeometry();
+    const vertices = [];
+    const indices = [];
+    
+    vertices.push(0, height/2, 0);
+    vertices.push(0, -height/2, 0);
+    
+    for(let i = 0; i < segments; i++) {
+        const angle = (i / segments) * Math.PI * 2;
+        vertices.push(
+            Math.cos(angle) * radius,
+            0,
+            Math.sin(angle) * radius
         );
-        
-        // Position the crystal group
-        const radius = 30 + Math.random() * 40;
-        const theta = (i / 12) * Math.PI * 2;
-        crystalGroup.position.set(
-            Math.cos(theta) * radius,
-            (Math.random() - 0.5) * 40,
-            Math.sin(theta) * radius
-        );
-        
-        // Add the main crystal to the group
-        crystalGroup.add(crystal);
-        
-        // Add orbital runes
-        const runeCount = Math.floor(Math.random() * 3) + 2;
-        for(let j = 0; j < runeCount; j++) {
-            const rune = createOrbitalRune(runeGeometry, runeTextures);
-            crystalGroup.add(rune);
-        }
-        
-        // Add energy streams
-        addEnergyStreams(crystalGroup);
-        
-        // Store animation parameters
-        crystalGroup.userData = {
-            rotationSpeed: (Math.random() - 0.5) * 0.002,
-            floatSpeed: 0.001 + Math.random() * 0.002,
-            floatOffset: Math.random() * Math.PI * 2,
-            pulseSpeed: 0.001 + Math.random() * 0.002,
-            runeSpeed: 0.001 + Math.random() * 0.001
-        };
-        
-        islands.push(crystalGroup);
-        scene.add(crystalGroup);
     }
+    
+    for(let i = 0; i < segments; i++) {
+        indices.push(0, 2 + i, 2 + ((i + 1) % segments));
+        indices.push(1, 2 + ((i + 1) % segments), 2 + i);
+    }
+    
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    
+    return geometry;
+}
 
 function createRuneTexture(rune) {
     const canvas = document.createElement('canvas');
@@ -379,7 +286,6 @@ function createOrbitalRune(geometry, textures) {
     
     const rune = new THREE.Mesh(geometry, material);
     
-    // Set up orbital parameters
     rune.userData = {
         orbitRadius: 2 + Math.random() * 2,
         orbitSpeed: Math.random() * 0.5 + 0.5,
@@ -392,7 +298,6 @@ function createOrbitalRune(geometry, textures) {
 
 function addEnergyStreams(crystalGroup) {
     const streamCount = Math.floor(Math.random() * 3) + 2;
-    const streamGeometry = new THREE.BufferGeometry();
     const streamMaterial = new THREE.LineBasicMaterial({
         color: 0x89CFF0,
         transparent: true,
@@ -417,7 +322,7 @@ function addEnergyStreams(crystalGroup) {
         
         const curve = new THREE.CatmullRomCurve3(points);
         const streamPoints = curve.getPoints(50);
-        streamGeometry.setFromPoints(streamPoints);
+        const streamGeometry = new THREE.BufferGeometry().setFromPoints(streamPoints);
         
         const stream = new THREE.Line(streamGeometry, streamMaterial);
         crystalGroup.add(stream);
@@ -479,18 +384,18 @@ function updateMagicalTrail(trail) {
 }
 
 function setupLighting() {
-    const ambientLight = new THREE.AmbientLight(0x222244, 0.3); // Reduced ambient
+    const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
     scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1.5); // Increased intensity
+    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1.5);
     mainLight.position.set(10, 10, 10);
     scene.add(mainLight);
 
     const colors = [0x3366ff, 0x00aaff, 0x4422ff];
     colors.forEach((color, index) => {
-        const light = new THREE.PointLight(color, 1.5, 70); // Increased range and intensity
+        const light = new THREE.PointLight(color, 1.5, 70);
         light.position.set(
-            Math.cos(index * Math.PI * 2 / 3) * 40, // Increased radius
+            Math.cos(index * Math.PI * 2 / 3) * 40,
             Math.sin(index * Math.PI * 2 / 3) * 40,
             0
         );
@@ -514,89 +419,110 @@ function setupControls() {
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('keyup', onKeyUp);
     document.addEventListener('mousemove', onMouseMove);
-} 
-
-    function onKeyDown(event) {
-    // ... code ...
 }
 
-    function onKeyUp(event) {
-    // ... code ...
-}
-
-    function onMouseMove(event) {
-    // ... code ...
-}
-
-    function updateCrystals(delta, time) {
-        islands.forEach((crystalGroup) => {
-            // Update crystal shader uniforms
-            const crystal = crystalGroup.children[0];
-            if (crystal.material.uniforms) {
-                crystal.material.uniforms.time.value = time;
-            }
-            
-            // Rotate and float the entire group
-            crystalGroup.rotation.y += crystalGroup.userData.rotationSpeed;
-            crystalGroup.position.y += Math.sin(time * crystalGroup.userData.floatSpeed + 
-                                              crystalGroup.userData.floatOffset) * 0.02;
-            
-            // Update orbital runes
-            crystalGroup.children.forEach((child, index) => {
-                if (child.userData.orbitRadius) {
-                    const orbitAngle = time * child.userData.orbitSpeed + child.userData.orbitOffset;
-                    child.position.set(
-                        Math.cos(orbitAngle) * child.userData.orbitRadius,
-                        child.userData.verticalOffset + Math.sin(time * 0.5) * 0.5,
-                        Math.sin(orbitAngle) * child.userData.orbitRadius
-                    );
-                    child.rotation.z = time * 0.5;
-                    child.material.opacity = 0.6 + Math.sin(time * 2) * 0.4;
-                }
-            });
-        });
+function onKeyDown(event) {
+    if (!isControlsEnabled) return;
+    
+    switch(event.code) {
+        case 'KeyW': moveForward = true; break;
+        case 'KeyS': moveBackward = true; break;
+        case 'KeyA': moveLeft = true; break;
+        case 'KeyD': moveRight = true; break;
+        case 'Space': moveUp = true; break;
+        case 'ShiftLeft': moveDown = true; break;
     }
+}
 
-    function animate() {
-        requestAnimationFrame(animate);
-        const delta = clock.getDelta();
-        const time = Date.now() * 0.001;
+function onKeyUp(event) {
+    if (!isControlsEnabled) return;
+    
+    switch(event.code) {
+        case 'KeyW': moveForward = false; break;
+        case 'KeyS': moveBackward = false; break;
+        case 'KeyA': moveLeft = false; break;
+        case 'KeyD': moveRight = false; break;
+        case 'Space': moveUp = false; break;
+        case 'ShiftLeft': moveDown = false; break;
+    }
+}
 
-        if (isControlsEnabled) {
-            direction.z = Number(moveForward) - Number(moveBackward);
-            direction.x = Number(moveRight) - Number(moveLeft);
-            direction.y = Number(moveUp) - Number(moveDown);
-            direction.normalize();
+function onMouseMove(event) {
+    if (!isControlsEnabled) return;
+    
+    if (document.pointerLockElement === document.querySelector('#portal-canvas')) {
+        const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+        const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+        
+        camera.rotation.y -= movementX * 0.002;
+        camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x - movementY * 0.002));
+    }
+}
 
-            if (moveForward || moveBackward) camera.translateZ(-direction.z * 30 * delta);
-            if (moveLeft || moveRight) camera.translateX(-direction.x * 30 * delta);
-            if (moveUp || moveDown) camera.translateY(direction.y * 30 * delta);
-
-            updateMagicalTrail(magicTrail);
+function updateCrystals(delta, time) {
+    islands.forEach((crystalGroup) => {
+        const crystal = crystalGroup.children[0];
+        if (crystal.material.uniforms) {
+            crystal.material.uniforms.time.value = time;
         }
-
-        // Update crystal animations
-        updateCrystals(delta, time);
-
-        // Update particle animations
-        particles.forEach((particle) => {
-            if (particle.userData.parentCrystal) {
-                particle.rotation.y += particle.userData.rotationSpeed;
-                particle.rotation.z += particle.userData.rotationSpeed * 0.5;
-            } else {
-                particle.rotation.y += 0.0005;
+        
+        crystalGroup.rotation.y += crystalGroup.userData.rotationSpeed;
+        crystalGroup.position.y += Math.sin(time * crystalGroup.userData.floatSpeed + 
+                                          crystalGroup.userData.floatOffset) * 0.02;
+        
+        crystalGroup.children.forEach((child) => {
+            if (child.userData.orbitRadius) {
+                const orbitAngle = time * child.userData.orbitSpeed + child.userData.orbitOffset;
+                child.position.set(
+                    Math.cos(orbitAngle) * child.userData.orbitRadius,
+                    child.userData.verticalOffset + Math.sin(time * 0.5) * 0.5,
+                    Math.sin(orbitAngle) * child.userData.orbitRadius
+                );
+                child.rotation.z = time * 0.5;
+                child.material.opacity = 0.6 + Math.sin(time * 2) * 0.4;
             }
         });
+    });
+}
 
-        renderer.render(scene, camera);
+function animate() {
+    requestAnimationFrame(animate);
+    const delta = clock.getDelta();
+    const time = Date.now() * 0.001;
+
+    if (isControlsEnabled) {
+        direction.z = Number(moveForward) - Number(moveBackward);
+        direction.x = Number(moveRight) - Number(moveLeft);
+        direction.y = Number(moveUp) - Number(moveDown);
+        direction.normalize();
+
+        if (moveForward || moveBackward) camera.translateZ(-direction.z * 30 * delta);
+        if (moveLeft || moveRight) camera.translateX(-direction.x * 30 * delta);
+        if (moveUp || moveDown) camera.translateY(direction.y * 30 * delta);
+
+        updateMagicalTrail(magicTrail);
     }
 
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+    updateCrystals(delta, time);
+
+    particles.forEach((particle) => {
+        if (particle.userData.parentCrystal) {
+            particle.rotation.y += particle.userData.rotationSpeed;
+            particle.rotation.z += particle.userData.rotationSpeed * 0.5;
+        } else {
+            particle.rotation.y += 0.0005;
+        }
     });
 
-    window.addEventListener('load', () => {
-        setTimeout(init, 100);
-    });
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+window.addEventListener('load', () => {
+    setTimeout(init, 100);
+});
