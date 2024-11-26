@@ -469,9 +469,14 @@ function updateCrystals(delta, time) {
         }
         
         crystalGroup.rotation.y += crystalGroup.userData.rotationSpeed;
+
+        // Adding gentle rotation to each crystal
+        crystal.rotation.x += 0.001; // Slow X rotation for added depth
+        crystal.rotation.y += 0.002; // Slow Y rotation for a magical feel
+
         crystalGroup.position.y += Math.sin(time * crystalGroup.userData.floatSpeed + 
                                           crystalGroup.userData.floatOffset) * 0.02;
-        
+
         crystalGroup.children.forEach((child) => {
             if (child.userData.orbitRadius) {
                 const orbitAngle = time * child.userData.orbitSpeed + child.userData.orbitOffset;
