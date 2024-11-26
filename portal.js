@@ -153,76 +153,34 @@ function setupStarfield() {
 }
 
 // In setupFloatingIslands()
-const crystalGeometries = [
-    new THREE.IcosahedronGeometry(4, 0), // Reduced from 2 to 0 for sharper edges
-    new THREE.OctahedronGeometry(5, 0),  // Reduced subdivisions
-    new THREE.TetrahedronGeometry(6, 0), // Kept at 0 for sharpest form
-    createCustomCrystal(4, 12, 4),  // Made taller
-    createCustomCrystal(3, 9, 3),   // Made taller
-    createCustomCrystal(5, 15, 5)   // Made taller and more complex
-];
+function setupFloatingIslands() {
+    const crystalGeometries = [
+        new THREE.IcosahedronGeometry(4, 0),
+        new THREE.OctahedronGeometry(5, 0),
+        new THREE.TetrahedronGeometry(6, 0),
+        createCustomCrystal(4, 12, 4),
+        createCustomCrystal(3, 9, 3),
+        createCustomCrystal(5, 15, 5)
+    ];
 
-// Adjust material transparency
-const crystalMaterials = crystalGeometries.map(() => {
-    return new THREE.ShaderMaterial({
-        uniforms: {
-            time: { value: 0 },
-            color: { value: new THREE.Color(
-                Math.random() * 0.1 + 0.4,  // Less red
-                Math.random() * 0.1 + 0.8,  // More blue
-                1.0
-            )},
-            pulseIntensity: { value: Math.random() * 0.3 + 0.7 },
-            glowIntensity: { value: Math.random() * 0.7 + 0.8 }  // Increased glow
-        },
-        vertexShader: crystalVertexShader,
-        fragmentShader: crystalFragmentShader,
-        transparent: true,
-        side: THREE.DoubleSide
+    const crystalMaterials = crystalGeometries.map(() => {
+        return new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 0 },
+                color: { value: new THREE.Color(
+                    Math.random() * 0.1 + 0.4,
+                    Math.random() * 0.1 + 0.8,
+                    1.0
+                )},
+                pulseIntensity: { value: Math.random() * 0.3 + 0.7 },
+                glowIntensity: { value: Math.random() * 0.7 + 0.8 }
+            },
+            vertexShader: crystalVertexShader,
+            fragmentShader: crystalFragmentShader,
+            transparent: true,
+            side: THREE.DoubleSide
+        });
     });
-});
-
-    // Helper function to create custom crystal geometry
-    function createCustomCrystal(radius, height, segments) {
-        const geometry = new THREE.BufferGeometry();
-        const vertices = [];
-        const indices = [];
-        
-        // Create top point
-        vertices.push(0, height/2, 0);
-        
-        // Create bottom point
-        vertices.push(0, -height/2, 0);
-        
-        // Create middle ring of points
-        for(let i = 0; i < segments; i++) {
-            const angle = (i / segments) * Math.PI * 2;
-            vertices.push(
-                Math.cos(angle) * radius,
-                0,
-                Math.sin(angle) * radius
-            );
-        }
-        
-        // Create faces
-        for(let i = 0; i < segments; i++) {
-            // Top faces
-            indices.push(0, 2 + i, 2 + ((i + 1) % segments));
-            // Bottom faces
-            indices.push(1, 2 + ((i + 1) % segments), 2 + i);
-        }
-        
-        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geometry.setIndex(indices);
-        geometry.computeVertexNormals();
-        
-        return geometry;
-    }
-
-    const runeGeometry = new THREE.PlaneGeometry(1, 1);
-    const runeTextures = [
-        '✧', '⚝', '✦', '⚘', '❈', '✴', '❋', '✺'
-    ].map(createRuneTexture);
 
     for(let i = 0; i < 12; i++) {
         const crystalGroup = new THREE.Group();
@@ -268,6 +226,7 @@ const crystalMaterials = crystalGeometries.map(() => {
         islands.push(crystalGroup);
         scene.add(crystalGroup);
     }
+}
 
 function createRuneTexture(rune) {
     const canvas = document.createElement('canvas');
