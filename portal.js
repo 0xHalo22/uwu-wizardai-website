@@ -32,22 +32,25 @@ void main() {
     // Base crystal color with transparency
     vec3 baseColor = color;
     
-    // Pulsing effect
+    // Enhanced pulsing effect
     float pulse = sin(time * 2.0) * 0.5 + 0.5;
     pulse = pulse * pulseIntensity;
     
-    // Edge glow effect
-    float fresnel = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 3.0);
-    vec3 glowColor = vec3(0.5, 0.8, 1.0) * fresnel * glowIntensity;
+    // Stronger edge glow effect
+    float fresnel = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 5.0); // Increased power for sharper edges
+    vec3 glowColor = vec3(0.5, 0.8, 1.0) * fresnel * glowIntensity * 1.5; // Increased intensity
     
-    // Energy flow effect
+    // More prominent energy flow effect
     float energy = sin(vUv.y * 20.0 + time * 3.0) * 0.5 + 0.5;
     energy *= sin(vUv.x * 15.0 - time * 2.0) * 0.5 + 0.5;
     
-    // Combine effects
-    vec3 finalColor = baseColor + (glowColor * pulse) + (vec3(0.3, 0.6, 1.0) * energy * 0.3);
+    // Combine effects with stronger glow
+    vec3 finalColor = baseColor + (glowColor * pulse * 1.2) + (vec3(0.3, 0.6, 1.0) * energy * 0.4);
     
-    gl_FragColor = vec4(finalColor, 0.7 + fresnel * 0.3);
+    // Adjusted transparency for more crystal-like appearance
+    float alpha = 0.5 + fresnel * 0.5;
+    
+    gl_FragColor = vec4(finalColor, alpha);
 }`;
 
 function init() {
@@ -149,27 +152,72 @@ function setupStarfield() {
     scene.add(starField);
 }
 
-function setupFloatingIslands() {
-    const crystalGeometries = [
-        new THREE.IcosahedronGeometry(4, 2),
-        new THREE.OctahedronGeometry(5, 3),
-        new THREE.TetrahedronGeometry(6, 2)
-    ];
+// In setupFloatingIslands()
+const crystalGeometries = [
+    new THREE.IcosahedronGeometry(4, 0), // Reduced from 2 to 0 for sharper edges
+    new THREE.OctahedronGeometry(5, 0),  // Reduced subdivisions
+    new THREE.TetrahedronGeometry(6, 0), // Kept at 0 for sharpest form
+    createCustomCrystal(4, 12, 4),  // Made taller
+    createCustomCrystal(3, 9, 3),   // Made taller
+    createCustomCrystal(5, 15, 5)   // Made taller and more complex
+];
 
-    const crystalMaterials = crystalGeometries.map(() => {
-        return new THREE.ShaderMaterial({
-            uniforms: {
-                time: { value: 0 },
-                color: { value: new THREE.Color(Math.random() * 0.2 + 0.4, Math.random() * 0.2 + 0.6, 1.0) },
-                pulseIntensity: { value: Math.random() * 0.5 + 0.5 },
-                glowIntensity: { value: Math.random() * 0.5 + 0.5 }
-            },
-            vertexShader: crystalVertexShader,
-            fragmentShader: crystalFragmentShader,
-            transparent: true,
-            side: THREE.DoubleSide
-        });
+// Adjust material transparency
+const crystalMaterials = crystalGeometries.map(() => {
+    return new THREE.ShaderMaterial({
+        uniforms: {
+            time: { value: 0 },
+            color: { value: new THREE.Color(
+                Math.random() * 0.1 + 0.4,  // Less red
+                Math.random() * 0.1 + 0.8,  // More blue
+                1.0
+            )},
+            pulseIntensity: { value: Math.random() * 0.3 + 0.7 },
+            glowIntensity: { value: Math.random() * 0.7 + 0.8 }  // Increased glow
+        },
+        vertexShader: crystalVertexShader,
+        fragmentShader: crystalFragmentShader,
+        transparent: true,
+        side: THREE.DoubleSide
     });
+});
+
+    // Helper function to create custom crystal geometry
+    function createCustomCrystal(radius, height, segments) {
+        const geometry = new THREE.BufferGeometry();
+        const vertices = [];
+        const indices = [];
+        
+        // Create top point
+        vertices.push(0, height/2, 0);
+        
+        // Create bottom point
+        vertices.push(0, -height/2, 0);
+        
+        // Create middle ring of points
+        for(let i = 0; i < segments; i++) {
+            const angle = (i / segments) * Math.PI * 2;
+            vertices.push(
+                Math.cos(angle) * radius,
+                0,
+                Math.sin(angle) * radius
+            );
+        }
+        
+        // Create faces
+        for(let i = 0; i < segments; i++) {
+            // Top faces
+            indices.push(0, 2 + i, 2 + ((i + 1) % segments));
+            // Bottom faces
+            indices.push(1, 2 + ((i + 1) % segments), 2 + i);
+        }
+        
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        geometry.setIndex(indices);
+        geometry.computeVertexNormals();
+        
+        return geometry;
+    }
 
     const runeGeometry = new THREE.PlaneGeometry(1, 1);
     const runeTextures = [
@@ -220,7 +268,6 @@ function setupFloatingIslands() {
         islands.push(crystalGroup);
         scene.add(crystalGroup);
     }
-}
 
 function createRuneTexture(rune) {
     const canvas = document.createElement('canvas');
@@ -353,19 +400,19 @@ function updateMagicalTrail(trail) {
 }
 
 function setupLighting() {
-    const ambientLight = new THREE.AmbientLight(0x222244, 0.5);
+    const ambientLight = new THREE.AmbientLight(0x222244, 0.3); // Reduced ambient
     scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1);
+    const mainLight = new THREE.DirectionalLight(0xCCDDFF, 1.5); // Increased intensity
     mainLight.position.set(10, 10, 10);
     scene.add(mainLight);
 
     const colors = [0x3366ff, 0x00aaff, 0x4422ff];
     colors.forEach((color, index) => {
-        const light = new THREE.PointLight(color, 1, 50);
+        const light = new THREE.PointLight(color, 1.5, 70); // Increased range and intensity
         light.position.set(
-            Math.cos(index * Math.PI * 2 / 3) * 30,
-            Math.sin(index * Math.PI * 2 / 3) * 30,
+            Math.cos(index * Math.PI * 2 / 3) * 40, // Increased radius
+            Math.sin(index * Math.PI * 2 / 3) * 40,
             0
         );
         scene.add(light);
@@ -382,13 +429,14 @@ function setupControls() {
         } else {
             isControlsEnabled = false;
             showStartPrompt();
-        }});
+        }
+    });
 
-        document.addEventListener('keydown', onKeyDown);
-        document.addEventListener('keyup', onKeyUp);
-        document.addEventListener('mousemove', onMouseMove);
-    }
-    
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+    document.addEventListener('mousemove', onMouseMove);
+} 
+
     function onKeyDown(event) {
         if (!isControlsEnabled) return;
         
@@ -401,7 +449,7 @@ function setupControls() {
             case 'ShiftLeft': moveDown = true; break;
         }
     }
-    
+
     function onKeyUp(event) {
         if (!isControlsEnabled) return;
         
@@ -414,7 +462,7 @@ function setupControls() {
             case 'ShiftLeft': moveDown = false; break;
         }
     }
-    
+
     function onMouseMove(event) {
         if (!isControlsEnabled) return;
         
@@ -426,7 +474,7 @@ function setupControls() {
             camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x - movementY * 0.002));
         }
     }
-    
+
     function updateCrystals(delta, time) {
         islands.forEach((crystalGroup) => {
             // Update crystal shader uniforms
@@ -455,28 +503,28 @@ function setupControls() {
             });
         });
     }
-    
+
     function animate() {
         requestAnimationFrame(animate);
         const delta = clock.getDelta();
         const time = Date.now() * 0.001;
-    
+
         if (isControlsEnabled) {
             direction.z = Number(moveForward) - Number(moveBackward);
             direction.x = Number(moveRight) - Number(moveLeft);
             direction.y = Number(moveUp) - Number(moveDown);
             direction.normalize();
-    
+
             if (moveForward || moveBackward) camera.translateZ(-direction.z * 30 * delta);
             if (moveLeft || moveRight) camera.translateX(-direction.x * 30 * delta);
             if (moveUp || moveDown) camera.translateY(direction.y * 30 * delta);
-    
+
             updateMagicalTrail(magicTrail);
         }
-    
+
         // Update crystal animations
         updateCrystals(delta, time);
-    
+
         // Update particle animations
         particles.forEach((particle) => {
             if (particle.userData.parentCrystal) {
@@ -486,16 +534,16 @@ function setupControls() {
                 particle.rotation.y += 0.0005;
             }
         });
-    
+
         renderer.render(scene, camera);
     }
-    
+
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
-    
+
     window.addEventListener('load', () => {
         setTimeout(init, 100);
     });
