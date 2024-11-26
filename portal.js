@@ -32,19 +32,19 @@ void main() {
     // Base crystal color with transparency
     vec3 baseColor = color;
     
-    // Enhanced pulsing effect
+    // Enhanced pulsing effect for brighter intensity
     float pulse = sin(time * 2.0) * 0.5 + 0.5;
-    pulse = pulse * pulseIntensity;
+    pulse = pulse * pulseIntensity * 1.5; // Increased pulse for more brightness
 
     // Combination fresnel: Stronger glow at the edges but also including soft glow
-    float fresnelEdge = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 8.0);
-    float fresnelSoft = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 3.0);
+    float fresnelEdge = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 8.0); // Sharper edges with increased power
+    float fresnelSoft = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 3.0); // Softer glow for more coverage
     
-    // Glow color for edges and soft glow combined
-    vec3 edgeGlowColor = vec3(0.6, 0.9, 1.2) * fresnelEdge * glowIntensity * 1.5;
-    vec3 softGlowColor = vec3(0.4, 0.7, 1.0) * fresnelSoft * glowIntensity * 0.8;
+    // Glow color for edges and soft glow combined for a bright appearance
+    vec3 edgeGlowColor = vec3(0.6, 0.9, 1.2) * fresnelEdge * glowIntensity * 1.5; // Edge glow with stronger intensity
+    vec3 softGlowColor = vec3(0.4, 0.7, 1.0) * fresnelSoft * glowIntensity * 0.8; // Soft glow for overall shimmer
     
-    // More prominent energy flow effect
+    // More prominent energy flow effect to add liveliness
     float energy = sin(vUv.y * 25.0 + time * 4.0) * 0.5 + 0.5;
     energy *= sin(vUv.x * 18.0 - time * 3.0) * 0.5 + 0.5;
 
@@ -56,6 +56,7 @@ void main() {
 
     gl_FragColor = vec4(finalColor, alpha);
 }`;
+
 
 
 function init() {
@@ -181,27 +182,26 @@ function setupFloatingIslands() {
                     Math.random() * 0.1 + 0.8,
                     1.0
                 )},
-                pulseIntensity: { value: Math.random() * 0.2 + 0.3 }, // Reduced for a gentler pulse
-                glowIntensity: { value: Math.random() * 0.4 + 0.6 } // Reduced glow to prevent overwhelming brightness
+                pulseIntensity: { value: Math.random() * 0.3 + 1.0 }, // Adjusted for more intense pulse
+                glowIntensity: { value: Math.random() * 0.7 + 1.2 } // Increased glow for more brightness
             },
             vertexShader: crystalVertexShader,
             fragmentShader: crystalFragmentShader,
             transparent: true,
             side: THREE.DoubleSide,
-            blending: THREE.NormalBlending // Changed from AdditiveBlending to NormalBlending for a more natural look
+            blending: THREE.AdditiveBlending // Adds a glowing effect to make the crystals shimmer
         });
-    });    
-    
+    });
 
-    for(let i = 0; i < 12; i++) {
+    for (let i = 0; i < 12; i++) {
         const crystalGroup = new THREE.Group();
-        
+
         const geometryIndex = Math.floor(Math.random() * crystalGeometries.length);
         const crystal = new THREE.Mesh(
             crystalGeometries[geometryIndex],
             crystalMaterials[geometryIndex].clone()
         );
-        
+
         const radius = 30 + Math.random() * 40;
         const theta = (i / 12) * Math.PI * 2;
         crystalGroup.position.set(
@@ -209,17 +209,17 @@ function setupFloatingIslands() {
             (Math.random() - 0.5) * 40,
             Math.sin(theta) * radius
         );
-        
+
         crystalGroup.add(crystal);
-        
+
         const runeCount = Math.floor(Math.random() * 3) + 2;
-        for(let j = 0; j < runeCount; j++) {
+        for (let j = 0; j < runeCount; j++) {
             const rune = createOrbitalRune(runeGeometry, runeTextures);
             crystalGroup.add(rune);
         }
-        
+
         addEnergyStreams(crystalGroup);
-        
+
         crystalGroup.userData = {
             rotationSpeed: (Math.random() - 0.5) * 0.002,
             floatSpeed: 0.001 + Math.random() * 0.002,
@@ -227,7 +227,7 @@ function setupFloatingIslands() {
             pulseSpeed: 0.001 + Math.random() * 0.002,
             runeSpeed: 0.001 + Math.random() * 0.001
         };
-        
+
         islands.push(crystalGroup);
         scene.add(crystalGroup);
     }
@@ -472,15 +472,10 @@ function updateCrystals(delta, time) {
         if (crystal.material.uniforms) {
             crystal.material.uniforms.time.value = time;
         }
-        
+
         crystalGroup.rotation.y += crystalGroup.userData.rotationSpeed;
-
-        // Adding gentle rotation to each crystal
-        crystal.rotation.x += 0.001; // Slow X rotation for added depth
-        crystal.rotation.y += 0.002; // Slow Y rotation for a magical feel
-
-        crystalGroup.position.y += Math.sin(time * crystalGroup.userData.floatSpeed + 
-                                          crystalGroup.userData.floatOffset) * 0.02;
+        crystalGroup.position.y += Math.sin(time * crystalGroup.userData.floatSpeed +
+            crystalGroup.userData.floatOffset) * 0.02;
 
         crystalGroup.children.forEach((child) => {
             if (child.userData.orbitRadius) {
@@ -491,11 +486,12 @@ function updateCrystals(delta, time) {
                     Math.sin(orbitAngle) * child.userData.orbitRadius
                 );
                 child.rotation.z = time * 0.5;
-                child.material.opacity = 0.6 + Math.sin(time * 2) * 0.4;
+                child.material.opacity = 0.7 + Math.sin(time * 2) * 0.3; // Adjusted opacity to create a pulsing glow
             }
         });
     });
 }
+
 
 function animate() {
     requestAnimationFrame(animate);
